@@ -47,7 +47,7 @@ export default async function handler(req, res) {
         }
       }
 
-      // Commit activity
+      // Commits & Activity
       const commitRes = await fetch(`https://api.github.com/repos/${username}/${repo.name}/stats/commit_activity`, { headers });
       if (commitRes.ok) {
         const commitData = await commitRes.json();
@@ -61,7 +61,7 @@ export default async function handler(req, res) {
         }
       }
 
-      // Commit details
+      // Commit details (messages & hours)
       const commitsListRes = await fetch(`https://api.github.com/repos/${username}/${repo.name}/commits?per_page=50`, { headers });
       if (commitsListRes.ok) {
         const commitsList = await commitsListRes.json();
@@ -73,7 +73,7 @@ export default async function handler(req, res) {
         });
       }
 
-      // LOC
+      // LOC calculation
       const filesRes = await fetch(`https://api.github.com/repos/${username}/${repo.name}/git/trees/${repo.default_branch}?recursive=1`, { headers });
       if (!filesRes.ok) continue;
       const filesData = await filesRes.json();
@@ -101,22 +101,27 @@ export default async function handler(req, res) {
     function getCodingMood(hours) {
       if (!hours.length) return "Unknown";
       const counts = {};
-      for (let h of hours) counts[h] = (counts[h] || 0) + 1;
+      for (let h of hours) {
+        counts[h] = (counts[h] || 0) + 1;
+      }
       const totalCommits = hours.length;
-      const [peakHour, peakCount] = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
+      const peakHour = parseInt(Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0]);
+      const peakCount = counts[peakHour];
       const percentage = ((peakCount / totalCommits) * 100).toFixed(1);
 
-      if (peakHour >= 5 && peakHour < 12) return `Morning developer — ${percentage}% of commits between 5 AM and 12 PM`;
-      if (peakHour >= 12 && peakHour < 17) return `Afternoon developer — ${percentage}% of commits between 12 PM and 5 PM`;
-      if (peakHour >= 17 && peakHour < 22) return `Evening developer — ${percentage}% of commits between 5 PM and 10 PM`;
-      return `Night-time developer — ${percentage}% of commits between 10 PM and 5 AM`;
+      if (peakHour >= 5 && peakHour < 12) return `Morning developer – ${percentage}% of commits between 5 AM and 12 PM`;
+      if (peakHour >= 12 && peakHour < 17) return `Afternoon developer – ${percentage}% of commits between 12 PM and 5 PM`;
+      if (peakHour >= 17 && peakHour < 22) return `Evening developer – ${percentage}% of commits between 5 PM and 10 PM`;
+      return `Night-time developer – ${percentage}% of commits between 10 PM and 5 AM`;
     }
 
     // Helper: most common commit message
     function getMostCommonCommit(messages) {
       if (!messages.length) return "No commits";
       const counts = {};
-      for (let msg of messages) counts[msg] = (counts[msg] || 0) + 1;
+      for (let msg of messages) {
+        counts[msg] = (counts[msg] || 0) + 1;
+      }
       return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
     }
 
@@ -124,7 +129,8 @@ export default async function handler(req, res) {
     function getCommitStreak(dates) {
       if (!dates.length) return 0;
       const sortedDates = [...new Set(dates)].sort();
-      let streak = 1, maxStreak = 1;
+      let streak = 1;
+      let maxStreak = 1;
       for (let i = 1; i < sortedDates.length; i++) {
         const prev = new Date(sortedDates[i - 1]);
         const curr = new Date(sortedDates[i]);
@@ -146,32 +152,20 @@ export default async function handler(req, res) {
     const mostCommonCommit = getMostCommonCommit(commitMessages);
     const commitStreak = getCommitStreak(commitDates);
 
-    // Create sortable stats list
-    const stats = [
-      { label: "Total Lines of Code", value: totalLOC },
-      { label: "Total Commits", value: commitsCount },
-      { label: "Commit Streak (days)", value: commitStreak },
-      { label: "Total Stars", value: totalStars },
-      { label: "Most Active Day", value: mostActiveDay },
-      { label: "Favorite Language", value: favoriteLanguage },
-      { label: "Largest Repository", value: biggestRepo ? `${biggestRepo.name} (${biggestRepo.loc} LOC)` : "None" },
-      { label: "Coding Mood", value: codingMood },
-      { label: "Most Common Commit", value: mostCommonCommit }
-    ];
-
-    // Sort by numbers first, then keep text stats at the bottom
-    stats.sort((a, b) => {
-      const numA = typeof a.value === "number" ? a.value : -1;
-      const numB = typeof b.value === "number" ? b.value : -1;
-      return numB - numA;
-    });
-
     res.status(200).json({
       avatar: userData.avatar_url,
       name: userData.name || userData.login,
       joined: new Date(userData.created_at).toDateString(),
       repoCount: repos.length,
-      stats
+      totalStars,
+      commitsCount,
+      commitStreak,
+      mostActiveDay,
+      favoriteLanguage,
+      biggestRepo,
+      codingMood,
+      mostCommonCommit,
+      totalLOC
     });
 
   } catch (err) {

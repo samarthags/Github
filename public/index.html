@@ -1,51 +1,111 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GitHub LOC Counter</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
-    input { padding: 8px; width: 200px; }
-    button { padding: 8px 12px; }
-    table { margin: 20px auto; border-collapse: collapse; }
-    th, td { padding: 8px 12px; border: 1px solid #ccc; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GitHub Wrapped</title>
+<style>
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+  .profile {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .profile img {
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    border: 3px solid #30363d;
+  }
+  .profile h1 {
+    margin: 10px 0 5px;
+    font-size: 1.5em;
+  }
+  .profile p {
+    color: #8b949e;
+    font-size: 0.9em;
+  }
+  .stats-box {
+    background: #161b22;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  }
+  .stat-label {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+    color: #58a6ff;
+  }
+  .stat-value {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #fff;
+  }
+  .loading {
+    color: #8b949e;
+    font-size: 1.1em;
+    margin-top: 50px;
+  }
+</style>
 </head>
 <body>
-  <h1>GitHub LOC Counter</h1>
-  <input type="text" id="username" placeholder="Enter GitHub username">
-  <button onclick="getLOC()">Check LOC</button>
-  <div id="result"></div>
 
-  <script>
-    async function getLOC() {
-      const user = document.getElementById("username").value.trim();
-      if (!user) return alert("Please enter a username");
+<div class="profile">
+  <img id="avatar" src="" alt="User Avatar">
+  <h1 id="name">Loading...</h1>
+  <p id="joined"></p>
+  <p id="repoCount"></p>
+</div>
 
-      document.getElementById("result").innerHTML = "Loading...";
+<div class="stats-box">
+  <div class="stat-label" id="statLabel">Loading stat...</div>
+  <div class="stat-value" id="statValue">--</div>
+</div>
 
-      try {
-        const res = await fetch(`/api/loc?username=${user}`);
-        const data = await res.json();
+<div class="loading" id="loading">Fetching your GitHub Wrapped...</div>
 
-        if (data.error) {
-          document.getElementById("result").innerHTML = `<p style="color:red">${data.error}</p>`;
-          return;
-        }
+<script>
+async function fetchWrapped(username) {
+  const res = await fetch(`/api/loc?username=${username}`);
+  if (!res.ok) {
+    document.getElementById("loading").innerText = "Error fetching data.";
+    return;
+  }
+  const data = await res.json();
 
-        let html = `<h2>Total LOC: ${data.totalLOC}</h2>`;
-        html += "<table><tr><th>Repository</th><th>LOC</th></tr>";
-        data.repos.forEach(r => {
-          html += `<tr><td>${r.repo}</td><td>${r.loc}</td></tr>`;
-        });
-        html += "</table>";
+  // Fill profile data
+  document.getElementById("avatar").src = data.avatar;
+  document.getElementById("name").innerText = data.name;
+  document.getElementById("joined").innerText = `Joined: ${data.joined}`;
+  document.getElementById("repoCount").innerText = `Public Repos: ${data.repoCount}`;
+  document.getElementById("loading").style.display = "none";
 
-        document.getElementById("result").innerHTML = html;
+  // Animate stats one by one
+  let i = 0;
+  function showStat() {
+    if (i >= data.stats.length) i = 0;
+    document.getElementById("statLabel").innerText = data.stats[i].label;
+    document.getElementById("statValue").innerText = data.stats[i].value;
+    i++;
+    setTimeout(showStat, 2500); // change every 2.5s
+  }
+  showStat();
+}
 
-      } catch (err) {
-        document.getElementById("result").innerHTML = `<p style="color:red">${err.message}</p>`;
-      }
-    }
-  </script>
+// Change username here
+fetchWrapped("octocat");
+</script>
+
 </body>
 </html>

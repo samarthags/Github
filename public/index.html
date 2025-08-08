@@ -38,7 +38,6 @@
       max-width: 100%;
       width: 100%;
       margin: 0 auto;
-      padding: 20px;
       position: relative;
     }
 
@@ -49,7 +48,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      min-height: 80vh;
+      min-height: 100vh;
       transition: var(--transition);
     }
 
@@ -68,7 +67,6 @@
 
     h1 {
       font-size: 2.5rem;
-      color: var(--primary);
       margin-bottom: 10px;
       font-weight: 700;
       background: linear-gradient(135deg, #6e40c9 0%, #8a63d2 100%);
@@ -139,8 +137,9 @@
       align-items: center;
       justify-content: center;
       gap: 20px;
-      min-height: 80vh;
+      min-height: 100vh;
       text-align: center;
+      padding: 20px;
     }
 
     .spinner {
@@ -168,17 +167,16 @@
       flex-direction: column;
       min-height: 100vh;
       width: 100%;
-      padding: 20px 0;
       position: relative;
     }
 
     .wrapped-slide {
       width: 100%;
-      min-height: 80vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 20px;
+      padding: 40px 20px;
       opacity: 0;
       transform: translateY(20px);
       transition: var(--transition);
@@ -195,14 +193,16 @@
 
     .profile-header {
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 15px;
       margin-bottom: 30px;
+      text-align: center;
     }
 
     .avatar {
-      width: 80px;
-      height: 80px;
+      width: 120px;
+      height: 120px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid white;
@@ -211,27 +211,28 @@
 
     .profile-info h2 {
       color: var(--primary);
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-bottom: 5px;
     }
 
     .profile-info p {
       color: var(--text-light);
-      font-size: 0.9rem;
+      font-size: 1rem;
     }
 
     .stat-card {
       background-color: var(--card-bg);
       border-radius: var(--radius);
-      padding: 25px;
+      padding: 30px;
       box-shadow: var(--shadow);
       transition: var(--transition);
       margin-bottom: 30px;
+      text-align: center;
     }
 
     .stat-card h3 {
-      font-size: 2rem;
-      margin-bottom: 15px;
+      font-size: 2.2rem;
+      margin-bottom: 20px;
       font-weight: 700;
       color: var(--primary);
       line-height: 1.3;
@@ -239,7 +240,7 @@
 
     .stat-card p {
       color: var(--text-light);
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       line-height: 1.6;
     }
 
@@ -252,7 +253,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin: 30px 0;
+      margin: 20px 0;
     }
 
     .dot {
@@ -274,6 +275,10 @@
       justify-content: space-between;
       width: 100%;
       padding: 0 20px;
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      right: 0;
     }
 
     .nav-button {
@@ -283,9 +288,11 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      padding: 10px 15px;
+      padding: 10px 20px;
       border-radius: var(--radius);
       transition: var(--transition);
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: var(--shadow);
     }
 
     .nav-button:hover {
@@ -295,15 +302,20 @@
     .nav-button:disabled {
       color: #a0aec0;
       cursor: not-allowed;
-      background: none;
+      background-color: rgba(255, 255, 255, 0.5);
     }
 
     footer {
       text-align: center;
-      margin-top: 40px;
       color: var(--text-light);
       font-size: 0.9rem;
       padding: 20px;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--bg);
+      z-index: 10;
     }
 
     footer a {
@@ -312,36 +324,32 @@
       font-weight: 600;
     }
 
-    .restart-button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: var(--radius);
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      box-shadow: var(--shadow);
-      margin: 20px auto;
-      display: block;
-      max-width: 200px;
+    /* Text animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .restart-button:hover {
-      background-color: var(--primary-light);
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-hover);
+    .animate-text {
+      animation: fadeInUp 0.8s ease-out forwards;
     }
 
-    /* Animation classes */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+    .delay-1 {
+      animation-delay: 0.2s;
     }
 
-    .fade-in {
-      animation: fadeIn 0.5s ease-in-out;
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.6s;
     }
 
     /* Responsive styles */
@@ -355,16 +363,20 @@
       }
 
       .stat-card p {
-        font-size: 1rem;
+        font-size: 1.1rem;
       }
 
       .avatar {
-        width: 70px;
-        height: 70px;
+        width: 100px;
+        height: 100px;
       }
 
       .profile-info h2 {
-        font-size: 1.3rem;
+        font-size: 1.5rem;
+      }
+
+      .nav-buttons {
+        padding: 0 15px;
       }
     }
 
@@ -374,21 +386,21 @@
       }
 
       .stat-card {
-        padding: 20px;
+        padding: 25px 20px;
       }
 
       .stat-card h3 {
-        font-size: 1.5rem;
-        margin-bottom: 10px;
+        font-size: 1.6rem;
+        margin-bottom: 15px;
       }
 
       .avatar {
-        width: 60px;
-        height: 60px;
+        width: 90px;
+        height: 90px;
       }
 
       .profile-info h2 {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
       }
 
       .nav-buttons {
@@ -397,7 +409,18 @@
 
       .nav-button {
         font-size: 0.9rem;
-        padding: 8px 12px;
+        padding: 8px 15px;
+      }
+    }
+
+    @media (max-height: 700px) {
+      .wrapped-slide {
+        padding-top: 30px;
+        padding-bottom: 80px;
+      }
+
+      .stat-card {
+        margin-bottom: 15px;
       }
     }
   </style>
@@ -406,18 +429,14 @@
   <div class="container">
     <div class="input-container" id="inputContainer">
       <header>
-        <h1>GitHub Wrapped</h1>
-        <p class="subtitle">Your annual GitHub coding statistics</p>
+        <h1 class="animate-text">GitHub Wrapped</h1>
+        <p class="subtitle animate-text delay-1">Your annual GitHub coding statistics</p>
       </header>
 
       <div class="input-group">
-        <input type="text" id="usernameInput" placeholder="Enter your GitHub username" autocomplete="off">
-        <button id="fetchButton">Get My Wrapped</button>
+        <input type="text" id="usernameInput" placeholder="Enter your GitHub username" autocomplete="off" class="animate-text delay-2">
+        <button id="fetchButton" class="animate-text delay-3">Get My Wrapped</button>
       </div>
-
-      <footer>
-        Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
-      </footer>
     </div>
 
     <div class="loading-container" id="loadingContainer">
@@ -434,9 +453,11 @@
       </div>
 
       <div class="progress-dots" id="progressDots"></div>
-
-      <button class="restart-button" id="restartButton">Start Over</button>
     </div>
+
+    <footer>
+      Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
+    </footer>
   </div>
 
   <script>
@@ -450,7 +471,6 @@
     const progressDots = document.getElementById('progressDots');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
-    const restartButton = document.getElementById('restartButton');
 
     // State variables
     let stats = [];
@@ -515,23 +535,23 @@
                 <p>Joined GitHub on ${data.joined}</p>
               </div>
             </div>
-            <p>Here's your personalized GitHub year in review. Swipe or use arrows to navigate.</p>
+            <p class="animate-text delay-1">Here's your personalized GitHub year in review</p>
           `
         },
         {
           type: "stat",
           title: "Repository Overview",
-          content: `You have <strong>${data.repoCount}</strong> repositories with a total of <strong>${data.totalStars.toLocaleString()}</strong> stars.`
+          content: `You have <strong>${data.repoCount}</strong> repositories with <strong>${data.totalStars.toLocaleString()}</strong> stars.`
         },
         {
           type: "stat",
           title: "Code Mastery",
-          content: `You've written approximately <strong>${data.totalLOC.toLocaleString()}</strong> lines of code across all your projects.`
+          content: `You've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code.`
         },
         {
           type: "stat",
           title: "Commit Champion",
-          content: `You've made <strong>${data.commitsCount.toLocaleString()}</strong> commits with your longest streak being <strong>${data.commitStreak}</strong> days.`
+          content: `You've made <strong>${data.commitsCount.toLocaleString()}</strong> commits with a <strong>${data.commitStreak}</strong> day streak.`
         },
         {
           type: "stat",
@@ -556,7 +576,7 @@
         {
           type: "stat",
           title: "Commit Style",
-          content: `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>".`
+          content: `Your most common commit starts with "<strong>${data.mostCommonCommit}</strong>".`
         }
       ].filter(Boolean);
     }
@@ -568,8 +588,8 @@
       
       slide.innerHTML = `
         <div class="stat-card">
-          <h3>${stat.title}</h3>
-          <div>${stat.content}</div>
+          <h3 class="animate-text">${stat.title}</h3>
+          <div class="animate-text delay-1">${stat.content}</div>
         </div>
       `;
       
@@ -612,6 +632,15 @@
       
       // Reset auto-advance timer
       resetAutoAdvance();
+      
+      // Add animation classes to new content
+      const animatedElements = slides[index].querySelectorAll('.animate-text');
+      animatedElements.forEach((el, i) => {
+        el.style.animationDelay = `${i * 0.2}s`;
+        el.classList.remove('animate-text');
+        void el.offsetWidth; // Trigger reflow
+        el.classList.add('animate-text');
+      });
     }
 
     function updateProgressDots() {
@@ -692,7 +721,6 @@
     
     prevButton.addEventListener('click', prevSlide);
     nextButton.addEventListener('click', nextSlide);
-    restartButton.addEventListener('click', resetUI);
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
@@ -723,6 +751,11 @@
         prevSlide(); // Swipe right
       }
     }
+
+    // Initialize with animations
+    document.querySelectorAll('.animate-text').forEach((el, i) => {
+      el.style.animationDelay = `${i * 0.2}s`;
+    });
 
     // Initialize
     resetUI();

@@ -1,44 +1,51 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-<meta charset="utf-8">
-<title>GitHub LOC Counter</title>
-<style>
-  body { font-family: sans-serif; background: #0f1724; color: #fff; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-  .card { background: #1e293b; padding: 20px; border-radius: 8px; max-width: 600px; width: 100%; }
-  input, button { padding: 10px; border-radius: 5px; border: none; margin-top: 10px; width: 100%; }
-  button { background: #38bdf8; color: #000; font-weight: bold; cursor: pointer; }
-  .repo { margin-top: 8px; background: #0f1724; padding: 8px; border-radius: 5px; }
-</style>
+  <meta charset="UTF-8">
+  <title>GitHub LOC Counter</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+    input { padding: 8px; width: 200px; }
+    button { padding: 8px 12px; }
+    table { margin: 20px auto; border-collapse: collapse; }
+    th, td { padding: 8px 12px; border: 1px solid #ccc; }
+  </style>
 </head>
 <body>
-  <div class="card">
-    <h2>GitHub Lines of Code</h2>
-    <input id="username" placeholder="Enter GitHub username">
-    <button onclick="getLOC()">Get LOC</button>
-    <div id="result" style="margin-top:20px;"></div>
-  </div>
+  <h1>GitHub LOC Counter</h1>
+  <input type="text" id="username" placeholder="Enter GitHub username">
+  <button onclick="getLOC()">Check LOC</button>
+  <div id="result"></div>
 
-<script>
-async function getLOC() {
-  const user = document.getElementById("username").value.trim();
-  if (!user) return alert("Enter a username");
+  <script>
+    async function getLOC() {
+      const user = document.getElementById("username").value.trim();
+      if (!user) return alert("Please enter a username");
 
-  document.getElementById("result").innerHTML = "Calculating...";
-  try {
-    const res = await fetch(`/loc/${user}`);
-    const data = await res.json();
-    if (data.error) throw new Error(data.error);
+      document.getElementById("result").innerHTML = "Loading...";
 
-    let html = `<h3>Total LOC: ${data.totalLOC.toLocaleString()}</h3>`;
-    data.repos.forEach(r => {
-      html += `<div class="repo"><strong>${r.repo}</strong>: ${r.loc.toLocaleString()} LOC</div>`;
-    });
-    document.getElementById("result").innerHTML = html;
-  } catch (err) {
-    document.getElementById("result").innerHTML = "Error: " + err.message;
-  }
-}
-</script>
+      try {
+        const res = await fetch(`/api/loc?username=${user}`);
+        const data = await res.json();
+
+        if (data.error) {
+          document.getElementById("result").innerHTML = `<p style="color:red">${data.error}</p>`;
+          return;
+        }
+
+        let html = `<h2>Total LOC: ${data.totalLOC}</h2>`;
+        html += "<table><tr><th>Repository</th><th>LOC</th></tr>";
+        data.repos.forEach(r => {
+          html += `<tr><td>${r.repo}</td><td>${r.loc}</td></tr>`;
+        });
+        html += "</table>";
+
+        document.getElementById("result").innerHTML = html;
+
+      } catch (err) {
+        document.getElementById("result").innerHTML = `<p style="color:red">${err.message}</p>`;
+      }
+    }
+  </script>
 </body>
 </html>

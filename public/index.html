@@ -1,125 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>GitHub Stats Viewer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-      text-align: center;
-      padding: 20px;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Your GitHub Wrapped</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+  body {
+    margin: 0; padding: 0;
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+    flex-direction: column;
+  }
+
+  #container {
+    max-width: 600px;
+    width: 90vw;
+    text-align: center;
+    background: #161b22;
+    border-radius: 20px;
+    padding: 30px 40px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+    position: relative;
+  }
+
+  #usernameInput {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    margin-bottom: 20px;
+  }
+
+  button {
+    background: #238636;
+    border: none;
+    padding: 15px 30px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1em;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+  }
+
+  button:hover {
+    background: #2ea043;
+  }
+
+  #loading {
+    margin-top: 20px;
+    font-size: 1.1em;
+    color: #8b949e;
+  }
+
+  /* Wrapped screen styles */
+  #wrappedScreen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    min-height: 250px;
+  }
+
+  #avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid #30363d;
+    margin-bottom: 15px;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeUp 0.8s forwards;
+  }
+
+  #welcomeText {
+    font-size: 2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    min-height: 2.5em;
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.8s forwards;
+    animation-delay: 0.3s;
+  }
+
+  #storyText {
+    font-size: 1.4em;
+    line-height: 1.4;
+    max-width: 550px;
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-    h1 {
-      color: #333;
+  }
+
+  @keyframes slideInLeft {
+    to {
+      opacity: 1;
+      transform: translateX(0);
     }
-    input {
-      padding: 10px;
-      width: 250px;
-      margin-right: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      background: #007bff;
-      color: white;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    .card {
-      max-width: 800px;
-      margin: 20px auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: left;
-    }
-    .profile {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    .profile img {
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      margin-right: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      padding: 8px 10px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-    }
-    th {
-      background: #f8f8f8;
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <h1>GitHub Stats Viewer</h1>
-  <input type="text" id="username" placeholder="Enter GitHub username">
-  <button onclick="getStats()">Get Stats</button>
-  
-  <div id="result"></div>
 
-  <script>
-    async function getStats() {
-      const username = document.getElementById("username").value.trim();
-      if (!username) return alert("Please enter a username");
+<div id="container">
+  <input type="text" id="usernameInput" placeholder="Enter your GitHub username" autocomplete="off" />
+  <button id="startBtn">Show My GitHub Wrapped</button>
+  <div id="loading"></div>
 
-      document.getElementById("result").innerHTML = "<p>Loading...</p>";
+  <div id="wrappedScreen">
+    <img id="avatar" src="" alt="User Avatar" />
+    <div id="welcomeText"></div>
+    <div id="storyText"></div>
+  </div>
+</div>
 
-      try {
-        const res = await fetch(`/api/loc?username=${username}`);
-        const data = await res.json();
+<script>
+  const startBtn = document.getElementById('startBtn');
+  const usernameInput = document.getElementById('usernameInput');
+  const loadingDiv = document.getElementById('loading');
+  const wrappedScreen = document.getElementById('wrappedScreen');
+  const avatarImg = document.getElementById('avatar');
+  const welcomeText = document.getElementById('welcomeText');
+  const storyText = document.getElementById('storyText');
+  const container = document.getElementById('container');
 
-        if (data.error) {
-          document.getElementById("result").innerHTML = `<p style="color:red">${data.error}</p>`;
-          return;
-        }
+  let stats = [];
+  let currentIndex = 0;
+  let animationTimeout;
 
-        // Build profile section
-        let html = `
-          <div class="card">
-            <div class="profile">
-              <img src="${data.avatar}" alt="Avatar">
-              <div>
-                <h2>${data.name}</h2>
-                <p>Joined: ${data.joined}</p>
-              </div>
-            </div>
-            <table>
-              <tr><th>Repositories</th><td>${data.repoCount}</td></tr>
-              <tr><th>Total Stars</th><td>${data.totalStars}</td></tr>
-              <tr><th>Total Commits</th><td>${data.commitsCount}</td></tr>
-              <tr><th>Commit Streak</th><td>${data.commitStreak || "N/A"}</td></tr>
-              <tr><th>Most Active Day</th><td>${data.mostActiveDay}</td></tr>
-              <tr><th>Most Common Commit</th><td>${data.mostCommonCommit || "N/A"}</td></tr>
-              <tr><th>Favorite Language</th><td>${data.favoriteLanguage}</td></tr>
-              <tr><th>Biggest Repository</th><td>${data.biggestRepo?.name || "N/A"} (${data.biggestRepo?.loc || 0} LOC)</td></tr>
-              <tr><th>Total Lines of Code</th><td>${data.totalLOC}</td></tr>
-              <tr><th>Coding Mood</th><td>${data.codingMood || "N/A"}</td></tr>
-            </table>
-          </div>
-        `;
+  function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
-        document.getElementById("result").innerHTML = html;
+  function animateStory(text) {
+    storyText.style.opacity = 0;
+    storyText.style.transform = 'translateX(-50px)';
+    storyText.textContent = text;
 
-      } catch (err) {
-        document.getElementById("result").innerHTML = `<p style="color:red">${err.message}</p>`;
-      }
+    // Animate in
+    setTimeout(() => {
+      storyText.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
+      storyText.style.opacity = 1;
+      storyText.style.transform = 'translateX(0)';
+    }, 50);
+  }
+
+  async function showStorySequence() {
+    while (true) {
+      animateStory(stats[currentIndex]);
+      currentIndex = (currentIndex + 1) % stats.length;
+      await sleep(4000);
     }
-  </script>
+  }
+
+  async function startWrapped() {
+    const username = usernameInput.value.trim();
+    if (!username) {
+      alert('Please enter your GitHub username.');
+      return;
+    }
+
+    loadingDiv.textContent = 'Fetching your GitHub Wrapped...';
+    startBtn.disabled = true;
+    usernameInput.disabled = true;
+
+    try {
+      const res = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
+      if (!res.ok) throw new Error('User not found or API error.');
+      const data = await res.json();
+
+      // Prepare friendly story texts
+      stats = [
+        `Hey <strong>${data.name || username}</strong>, did you know you've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code? That's a mountain of creativity!`,
+        `You made <strong>${data.commitsCount.toLocaleString()}</strong> commits in total — your dedication is inspiring.`,
+        data.commitStreak
+          ? `Your longest commit streak was <strong>${data.commitStreak} days</strong>. Keep that momentum going!`
+          : `Commit streak data is not available.`,
+        `You've earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community. Shine on!`,
+        `Your favorite language is <strong>${data.favoriteLanguage}</strong>, and it suits you perfectly.`,
+        data.biggestRepo
+          ? `Your largest repo is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code. Impressive!`
+          : `No repository data to show here.`,
+        `You code mostly on <strong>${data.mostActiveDay}</strong>. That’s your prime time!`,
+        data.codingMood
+          ? `Looks like your coding mood is <strong>${data.codingMood}</strong>. Stay inspired!`
+          : `Coding mood data is unavailable.`,
+        data.mostCommonCommit
+          ? `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>". A true signature!`
+          : `No common commit message data found.`
+      ];
+
+      // Show wrapped screen
+      usernameInput.style.display = 'none';
+      startBtn.style.display = 'none';
+      loadingDiv.style.display = 'none';
+      wrappedScreen.style.display = 'flex';
+
+      // Show avatar and welcome
+      avatarImg.src = data.avatar;
+      welcomeText.textContent = `Hi there, ${data.name || username}!`;
+      welcomeText.style.opacity = 0;
+      welcomeText.style.transform = 'translateY(30px)';
+      setTimeout(() => {
+        welcomeText.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+        welcomeText.style.opacity = 1;
+        welcomeText.style.transform = 'translateY(0)';
+      }, 100);
+
+      // Wait then start cycling through story
+      await sleep(3000);
+      currentIndex = 0;
+      showStorySequence();
+
+    } catch (error) {
+      loadingDiv.textContent = error.message;
+      startBtn.disabled = false;
+      usernameInput.disabled = false;
+    }
+  }
+
+  startBtn.addEventListener('click', startWrapped);
+  usernameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') startWrapped();
+  });
+</script>
+
 </body>
 </html>

@@ -1,196 +1,319 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GitHub LOC Checker</title>
+  <title>Your GitHub Wrapped</title>
   <style>
-    body {
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+
+    /* Reset */
+    * {
+      box-sizing: border-box;
+    }
+    html, body {
       margin: 0; padding: 0;
-      background: #fff;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      height: 100%;
+      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
-      color: #333;
-    }
-    main {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 20px;
-      position: relative;
-      text-align: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      -o-user-select: none;
     }
 
-    /* Avatar top-right */
-    #avatar {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      object-fit: cover;
-      box-shadow: 0 0 4px rgba(0,0,0,0.1);
-      display: none;
-    }
-
-    /* Input and button */
-    #inputContainer {
-      margin-bottom: 25px;
-      width: 100%;
-      max-width: 360px;
-      display: flex;
-      gap: 12px;
-    }
+    /* Input & Button */
     #usernameInput {
-      flex: 1;
-      padding: 12px 16px;
-      font-size: 1rem;
-      border: 1.5px solid #aaa;
-      border-radius: 6px;
+      width: 90vw;
+      max-width: 400px;
+      padding: 16px 20px;
+      font-size: 1.3rem;
+      border-radius: 14px;
+      border: none;
       outline: none;
-      transition: border-color 0.3s ease;
+      margin-bottom: 20px;
+      background: #21262d;
+      color: #c9d1d9;
+      transition: background 0.3s ease;
     }
     #usernameInput:focus {
-      border-color: #0078d4;
-      box-shadow: 0 0 5px #0078d4aa;
+      background: #30363d;
     }
-    #checkBtn {
-      padding: 12px 20px;
-      background-color: #0078d4;
-      color: white;
-      font-size: 1rem;
-      font-weight: 600;
+
+    #startBtn {
+      width: 90vw;
+      max-width: 400px;
+      background: #238636;
       border: none;
-      border-radius: 6px;
+      padding: 16px 0;
+      font-weight: 700;
+      font-size: 1.3rem;
+      border-radius: 14px;
+      color: white;
       cursor: pointer;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s ease;
+      margin-bottom: 30px;
+      user-select: none;
     }
-    #checkBtn:hover {
-      background-color: #005fa3;
+    #startBtn:hover:not(:disabled) {
+      background: #2ea043;
     }
-    #checkBtn:disabled {
-      background-color: #aaa;
+    #startBtn:disabled {
+      background: #444c56;
       cursor: not-allowed;
     }
 
-    /* Result text */
-    #resultText {
-      font-size: 1.25rem;
-      max-width: 320px;
-      line-height: 1.4;
+    /* Loading text */
+    #loading {
+      font-size: 1.2rem;
+      color: #8b949e;
+      min-height: 1.5em;
+      margin-bottom: 20px;
+    }
+
+    /* Wrapped Screen */
+    #wrappedScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      max-width: 700px;
+      width: 90vw;
+      padding: 0 15px;
+    }
+
+    /* Top small avatar + name */
+    #topInfo {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 40px;
       user-select: none;
     }
 
-    /* Loading and error */
-    #message {
-      margin-top: 12px;
-      color: #cc0000;
-      font-size: 0.95rem;
-      min-height: 1.2em;
+    #avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      border: 3px solid #30363d;
+      box-shadow: 0 0 12px rgba(35,134,54,0.7);
+      flex-shrink: 0;
+    }
+
+    #usernameGreeting {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #58a6ff;
+      white-space: nowrap;
+    }
+
+    /* Main wrapped text */
+    #storyText {
+      font-size: 2.8rem;
+      font-weight: 700;
+      color: #fff;
+      max-width: 100%;
+      min-height: 10rem;
+      line-height: 1.2;
+      cursor: pointer;
+      user-select: none;
+      opacity: 0;
+      transform: translateX(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      text-shadow: 0 0 8px rgba(88,166,255,0.7);
+      margin-bottom: 15px;
+    }
+
+    #storyText.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* Tap helper */
+    #tapHelper {
+      font-size: 1rem;
+      color: #8b949e;
+      font-weight: 500;
+      margin-bottom: 40px;
+      font-style: italic;
       user-select: none;
     }
 
     /* Footer */
     footer {
-      padding: 15px 0;
-      text-align: center;
+      margin-top: auto;
+      padding: 20px 10px;
       font-size: 1rem;
-      color: #666;
+      color: #8b949e;
       user-select: none;
-      border-top: 1px solid #eee;
-    }
-    footer span {
-      cursor: default;
     }
 
-    @media (max-width: 420px) {
-      #inputContainer {
-        flex-direction: column;
+    footer a {
+      color: #58a6ff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 450px) {
+      #storyText {
+        font-size: 2rem;
+        min-height: 8rem;
       }
-      #checkBtn {
-        width: 100%;
+      #usernameGreeting {
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <img id="avatar" alt="User avatar" />
+  <input id="usernameInput" type="text" placeholder="Enter your GitHub username" autocomplete="off" />
+  <button id="startBtn">Show My GitHub Wrapped</button>
+  <div id="loading"></div>
 
-  <main>
-    <div id="inputContainer">
-      <input type="text" id="usernameInput" placeholder="Enter GitHub username" aria-label="GitHub username" />
-      <button id="checkBtn">Check Lines</button>
+  <div id="wrappedScreen" aria-live="polite" aria-atomic="true">
+    <div id="topInfo">
+      <img id="avatar" src="" alt="User avatar" />
+      <div id="usernameGreeting"></div>
     </div>
-    <div id="resultText"></div>
-    <div id="message" role="alert" aria-live="assertive"></div>
-  </main>
+
+    <div id="storyText" title="Tap or click to see next stat" tabindex="0" role="button" aria-pressed="false"></div>
+    <div id="tapHelper">Tap or click the text to see more stats</div>
+  </div>
 
   <footer>
-    Made with 😊 by Samarth
+    made with 💜 by <a href="https://samarthags.in" target="_blank" rel="noopener noreferrer">Samartha gs</a>
   </footer>
 
-  <script>
-    const usernameInput = document.getElementById('usernameInput');
-    const checkBtn = document.getElementById('checkBtn');
-    const resultText = document.getElementById('resultText');
-    const message = document.getElementById('message');
-    const avatar = document.getElementById('avatar');
+<script>
+  const startBtn = document.getElementById('startBtn');
+  const usernameInput = document.getElementById('usernameInput');
+  const loadingDiv = document.getElementById('loading');
+  const wrappedScreen = document.getElementById('wrappedScreen');
+  const avatarImg = document.getElementById('avatar');
+  const usernameGreeting = document.getElementById('usernameGreeting');
+  const storyText = document.getElementById('storyText');
+  const tapHelper = document.getElementById('tapHelper');
 
-    async function fetchLOC(username) {
-      message.textContent = '';
-      resultText.textContent = '';
-      avatar.style.display = 'none';
+  let stats = [];
+  let currentIndex = 0;
+  let autoAdvanceTimeout = null;
+  let isAnimating = false;
 
-      if (!username) {
-        message.textContent = 'Please enter a username.';
-        return;
-      }
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
 
-      checkBtn.disabled = true;
-      message.textContent = 'Loading...';
+  async function showStory(index) {
+    if (isAnimating) return;
+    isAnimating = true;
 
-      try {
-        const res = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
-        if (!res.ok) {
-          if(res.status === 404) throw new Error('User not found.');
-          else throw new Error('Failed to fetch data.');
-        }
-        const data = await res.json();
+    storyText.classList.remove('visible');
+    await sleep(800);
 
-        if (data.error) throw new Error(data.error);
+    storyText.innerHTML = stats[index];
+    storyText.classList.add('visible');
+    isAnimating = false;
 
-        avatar.src = data.avatar;
-        avatar.style.display = 'block';
+    resetAutoAdvance();
+  }
 
-        const displayName = data.name || username;
-        resultText.textContent = `Hey ${displayName}, you have completed ${data.totalLOC.toLocaleString()} lines of code.`;
+  function resetAutoAdvance() {
+    if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+    autoAdvanceTimeout = setTimeout(() => {
+      currentIndex = (currentIndex + 1) % stats.length;
+      showStory(currentIndex);
+    }, 8000);
+  }
 
-        message.textContent = '';
-      } catch (err) {
-        message.textContent = err.message;
-        resultText.textContent = '';
-      } finally {
-        checkBtn.disabled = false;
-      }
+  async function startWrapped() {
+    const username = usernameInput.value.trim();
+    if (!username) {
+      alert('Please enter your GitHub username.');
+      return;
     }
 
-    checkBtn.addEventListener('click', () => {
-      const username = usernameInput.value.trim();
-      fetchLOC(username);
-    });
+    loadingDiv.textContent = 'Fetching your GitHub Wrapped...';
+    startBtn.disabled = true;
+    usernameInput.disabled = true;
 
-    usernameInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        checkBtn.click();
-      }
-    });
-  </script>
+    try {
+      const res = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
+      if (!res.ok) throw new Error('User not found or API error.');
+      const data = await res.json();
+
+      stats = [
+        `Hey <strong>${data.name || username}</strong>, did you know you've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code? That’s a mountain of creativity!`,
+        `You made <strong>${data.commitsCount.toLocaleString()}</strong> commits in total — your dedication is inspiring.`,
+        data.commitStreak
+          ? `Your longest commit streak was <strong>${data.commitStreak} days</strong>. Keep that momentum going!`
+          : `Commit streak data is not available.`,
+        `You've earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community. Shine on!`,
+        `Your favorite language is <strong>${data.favoriteLanguage}</strong>, and it suits you perfectly.`,
+        data.biggestRepo
+          ? `Your largest repo is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code. Impressive!`
+          : `No repository data to show here.`,
+        `You code mostly on <strong>${data.mostActiveDay}</strong>. That’s your prime time!`,
+        data.codingMood
+          ? `Looks like your coding mood is <strong>${data.codingMood}</strong>. Stay inspired!`
+          : `Coding mood data is unavailable.`,
+        data.mostCommonCommit
+          ? `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>". A true signature!`
+          : `No common commit message data found.`
+      ];
+
+      // Show wrapped screen
+      usernameInput.style.display = 'none';
+      startBtn.style.display = 'none';
+      loadingDiv.style.display = 'none';
+      wrappedScreen.style.display = 'flex';
+
+      avatarImg.src = data.avatar;
+      avatarImg.alt = `${data.name || username}'s avatar`;
+      usernameGreeting.textContent = `Hey ${data.name || username}`;
+
+      // Show first stat
+      currentIndex = 0;
+      await showStory(currentIndex);
+
+      // Focus for accessibility so user can tab to storyText
+      storyText.focus();
+
+    } catch (error) {
+      loadingDiv.textContent = error.message;
+      startBtn.disabled = false;
+      usernameInput.disabled = false;
+    }
+  }
+
+  storyText.addEventListener('click', () => {
+    currentIndex = (currentIndex + 1) % stats.length;
+    showStory(currentIndex);
+  });
+
+  storyText.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      currentIndex = (currentIndex + 1) % stats.length;
+      showStory(currentIndex);
+    }
+  });
+
+  startBtn.addEventListener('click', startWrapped);
+  usernameInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') startWrapped();
+  });
+</script>
+
 </body>
 </html>

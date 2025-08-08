@@ -7,38 +7,37 @@
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
-  body {
+  html, body {
     margin: 0; padding: 0;
-    background: #0d1117;
+    height: 100%;
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
     color: #c9d1d9;
     font-family: 'Poppins', sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
     overflow: hidden;
     flex-direction: column;
-  }
-
-  #container {
-    max-width: 600px;
-    width: 90vw;
     text-align: center;
-    background: #161b22;
-    border-radius: 20px;
-    padding: 30px 40px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-    position: relative;
+    user-select: none;
+    -webkit-user-select: none;
   }
 
-  #usernameInput {
-    width: 100%;
-    padding: 15px;
-    font-size: 1.2em;
+  input[type="text"] {
+    width: 90vw;
+    max-width: 360px;
+    padding: 15px 20px;
+    font-size: 1.2rem;
     border-radius: 12px;
     border: none;
     outline: none;
     margin-bottom: 20px;
+    background: #21262d;
+    color: #c9d1d9;
+    transition: background 0.3s ease;
+  }
+  input[type="text"]:focus {
+    background: #30363d;
   }
 
   button {
@@ -47,30 +46,35 @@
     padding: 15px 30px;
     color: white;
     font-weight: 700;
-    font-size: 1.1em;
+    font-size: 1.2rem;
     border-radius: 12px;
     cursor: pointer;
+    width: 90vw;
+    max-width: 360px;
     transition: background 0.3s ease;
-    width: 100%;
+    user-select: none;
   }
-
   button:hover {
     background: #2ea043;
+  }
+  button:disabled {
+    background: #444c56;
+    cursor: not-allowed;
   }
 
   #loading {
     margin-top: 20px;
-    font-size: 1.1em;
+    font-size: 1.1rem;
     color: #8b949e;
+    min-height: 1.5em;
   }
 
-  /* Wrapped screen styles */
   #wrappedScreen {
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 20px;
-    min-height: 250px;
+    padding: 0 20px;
+    max-width: 600px;
   }
 
   #avatar {
@@ -78,50 +82,53 @@
     height: 120px;
     border-radius: 50%;
     border: 3px solid #30363d;
-    margin-bottom: 15px;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.8s forwards;
+    margin-bottom: 20px;
+    box-shadow: 0 0 15px rgba(35,134,54,0.6);
+    user-select: none;
   }
 
   #welcomeText {
-    font-size: 2em;
+    font-size: 2.4rem;
     font-weight: 700;
-    margin-bottom: 20px;
-    min-height: 2.5em;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.8s forwards;
-    animation-delay: 0.3s;
+    margin-bottom: 30px;
+    line-height: 1.1;
   }
 
   #storyText {
-    font-size: 1.4em;
+    font-size: 1.5rem;
     line-height: 1.4;
-    max-width: 550px;
+    max-width: 90vw;
+    color: #58a6ff;
+    cursor: pointer;
+    user-select: none;
+    min-height: 6em;
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  #storyText.fadeOut {
     opacity: 0;
-    transform: translateX(-50px);
+    transform: translateX(-30px);
   }
 
-  /* Animations */
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
+  #storyText.fadeIn {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* Responsive tweaks */
+  @media (max-width: 400px) {
+    #welcomeText {
+      font-size: 1.8rem;
     }
-  }
-
-  @keyframes slideInLeft {
-    to {
-      opacity: 1;
-      transform: translateX(0);
+    #storyText {
+      font-size: 1.2rem;
+      min-height: 5em;
     }
   }
 </style>
 </head>
 <body>
 
-<div id="container">
   <input type="text" id="usernameInput" placeholder="Enter your GitHub username" autocomplete="off" />
   <button id="startBtn">Show My GitHub Wrapped</button>
   <div id="loading"></div>
@@ -129,9 +136,8 @@
   <div id="wrappedScreen">
     <img id="avatar" src="" alt="User Avatar" />
     <div id="welcomeText"></div>
-    <div id="storyText"></div>
+    <div id="storyText" title="Tap to see next"></div>
   </div>
-</div>
 
 <script>
   const startBtn = document.getElementById('startBtn');
@@ -141,35 +147,30 @@
   const avatarImg = document.getElementById('avatar');
   const welcomeText = document.getElementById('welcomeText');
   const storyText = document.getElementById('storyText');
-  const container = document.getElementById('container');
 
   let stats = [];
   let currentIndex = 0;
-  let animationTimeout;
+  let isAnimating = false;
 
   function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
-  function animateStory(text) {
-    storyText.style.opacity = 0;
-    storyText.style.transform = 'translateX(-50px)';
-    storyText.textContent = text;
+  async function showStory(index) {
+    if (isAnimating) return;
+    isAnimating = true;
 
-    // Animate in
-    setTimeout(() => {
-      storyText.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
-      storyText.style.opacity = 1;
-      storyText.style.transform = 'translateX(0)';
-    }, 50);
-  }
+    storyText.classList.add('fadeOut');
+    await sleep(600);
 
-  async function showStorySequence() {
-    while (true) {
-      animateStory(stats[currentIndex]);
-      currentIndex = (currentIndex + 1) % stats.length;
-      await sleep(4000);
-    }
+    storyText.innerHTML = stats[index];
+    
+    storyText.classList.remove('fadeOut');
+    storyText.classList.add('fadeIn');
+
+    await sleep(600);
+    storyText.classList.remove('fadeIn');
+    isAnimating = false;
   }
 
   async function startWrapped() {
@@ -188,9 +189,8 @@
       if (!res.ok) throw new Error('User not found or API error.');
       const data = await res.json();
 
-      // Prepare friendly story texts
       stats = [
-        `Hey <strong>${data.name || username}</strong>, did you know you've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code? That's a mountain of creativity!`,
+        `Hey <strong>${data.name || username}</strong>, did you know you've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code? That’s a mountain of creativity!`,
         `You made <strong>${data.commitsCount.toLocaleString()}</strong> commits in total — your dedication is inspiring.`,
         data.commitStreak
           ? `Your longest commit streak was <strong>${data.commitStreak} days</strong>. Keep that momentum going!`
@@ -218,18 +218,10 @@
       // Show avatar and welcome
       avatarImg.src = data.avatar;
       welcomeText.textContent = `Hi there, ${data.name || username}!`;
-      welcomeText.style.opacity = 0;
-      welcomeText.style.transform = 'translateY(30px)';
-      setTimeout(() => {
-        welcomeText.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
-        welcomeText.style.opacity = 1;
-        welcomeText.style.transform = 'translateY(0)';
-      }, 100);
 
-      // Wait then start cycling through story
-      await sleep(3000);
+      // Show first story text
       currentIndex = 0;
-      showStorySequence();
+      await showStory(currentIndex);
 
     } catch (error) {
       loadingDiv.textContent = error.message;
@@ -237,6 +229,12 @@
       usernameInput.disabled = false;
     }
   }
+
+  storyText.addEventListener('click', () => {
+    if (stats.length === 0) return;
+    currentIndex = (currentIndex + 1) % stats.length;
+    showStory(currentIndex);
+  });
 
   startBtn.addEventListener('click', startWrapped);
   usernameInput.addEventListener('keydown', e => {

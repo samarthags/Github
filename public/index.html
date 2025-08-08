@@ -16,6 +16,7 @@
       --shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
       --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
       --radius: 12px;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     }
 
     * {
@@ -29,19 +30,35 @@
       background-color: var(--bg);
       color: var(--text);
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-      line-height: 1.5;
+      line-height: 1.6;
+      overflow-x: hidden;
     }
 
     .container {
-      max-width: 600px;
+      max-width: 100%;
       width: 100%;
       margin: 0 auto;
-      flex: 1;
+      padding: 20px;
+      position: relative;
+    }
+
+    .input-container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
       display: flex;
       flex-direction: column;
+      justify-content: center;
+      min-height: 80vh;
+      transition: var(--transition);
+    }
+
+    .input-container.hidden {
+      opacity: 0;
+      transform: translateY(-20px);
+      pointer-events: none;
+      position: absolute;
+      width: 100%;
     }
 
     header {
@@ -50,15 +67,19 @@
     }
 
     h1 {
-      font-size: 2.2rem;
+      font-size: 2.5rem;
       color: var(--primary);
       margin-bottom: 10px;
       font-weight: 700;
+      background: linear-gradient(135deg, #6e40c9 0%, #8a63d2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
       color: var(--text-light);
       font-weight: 300;
+      font-size: 1.1rem;
     }
 
     .input-group {
@@ -73,9 +94,10 @@
       border: 1px solid #e2e8f0;
       border-radius: var(--radius);
       font-size: 1rem;
-      transition: all 0.2s ease;
+      transition: var(--transition);
       background-color: var(--card-bg);
       box-shadow: var(--shadow);
+      width: 100%;
     }
 
     input:focus {
@@ -93,8 +115,9 @@
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: var(--transition);
       box-shadow: var(--shadow);
+      width: 100%;
     }
 
     button:hover {
@@ -116,7 +139,8 @@
       align-items: center;
       justify-content: center;
       gap: 20px;
-      margin: 30px 0;
+      min-height: 80vh;
+      text-align: center;
     }
 
     .spinner {
@@ -135,25 +159,50 @@
     .loading-text {
       color: var(--text-light);
       font-size: 1.1rem;
-      text-align: center;
+      max-width: 80%;
+      margin: 0 auto;
     }
 
     .wrapped-container {
       display: none;
       flex-direction: column;
-      gap: 20px;
+      min-height: 100vh;
+      width: 100%;
+      padding: 20px 0;
+      position: relative;
+    }
+
+    .wrapped-slide {
+      width: 100%;
+      min-height: 80vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: var(--transition);
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .wrapped-slide.active {
+      opacity: 1;
+      transform: translateY(0);
+      position: relative;
     }
 
     .profile-header {
       display: flex;
       align-items: center;
       gap: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     .avatar {
-      width: 70px;
-      height: 70px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       object-fit: cover;
       border: 3px solid white;
@@ -163,6 +212,7 @@
     .profile-info h2 {
       color: var(--primary);
       font-size: 1.5rem;
+      margin-bottom: 5px;
     }
 
     .profile-info p {
@@ -175,23 +225,22 @@
       border-radius: var(--radius);
       padding: 25px;
       box-shadow: var(--shadow);
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-hover);
+      transition: var(--transition);
+      margin-bottom: 30px;
     }
 
     .stat-card h3 {
-      font-size: 1.8rem;
-      margin-bottom: 10px;
-      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 15px;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.3;
     }
 
     .stat-card p {
       color: var(--text-light);
+      font-size: 1.1rem;
+      line-height: 1.6;
     }
 
     .stat-card strong {
@@ -203,7 +252,7 @@
       display: flex;
       justify-content: center;
       gap: 10px;
-      margin-top: 20px;
+      margin: 30px 0;
     }
 
     .dot {
@@ -211,7 +260,8 @@
       height: 10px;
       border-radius: 50%;
       background-color: #e2e8f0;
-      transition: all 0.2s ease;
+      transition: var(--transition);
+      cursor: pointer;
     }
 
     .dot.active {
@@ -219,11 +269,41 @@
       transform: scale(1.2);
     }
 
+    .nav-buttons {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 20px;
+    }
+
+    .nav-button {
+      background: none;
+      border: none;
+      color: var(--primary);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: var(--radius);
+      transition: var(--transition);
+    }
+
+    .nav-button:hover {
+      background-color: rgba(110, 64, 201, 0.1);
+    }
+
+    .nav-button:disabled {
+      color: #a0aec0;
+      cursor: not-allowed;
+      background: none;
+    }
+
     footer {
       text-align: center;
       margin-top: 40px;
       color: var(--text-light);
       font-size: 0.9rem;
+      padding: 20px;
     }
 
     footer a {
@@ -232,13 +312,74 @@
       font-weight: 600;
     }
 
+    .restart-button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: var(--shadow);
+      margin: 20px auto;
+      display: block;
+      max-width: 200px;
+    }
+
+    .restart-button:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    /* Animation classes */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .stat-card h3 {
+        font-size: 1.8rem;
+      }
+
+      .stat-card p {
+        font-size: 1rem;
+      }
+
+      .avatar {
+        width: 70px;
+        height: 70px;
+      }
+
+      .profile-info h2 {
+        font-size: 1.3rem;
+      }
+    }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 1.8rem;
       }
 
+      .stat-card {
+        padding: 20px;
+      }
+
       .stat-card h3 {
         font-size: 1.5rem;
+        margin-bottom: 10px;
       }
 
       .avatar {
@@ -247,21 +388,36 @@
       }
 
       .profile-info h2 {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
+      }
+
+      .nav-buttons {
+        padding: 0 10px;
+      }
+
+      .nav-button {
+        font-size: 0.9rem;
+        padding: 8px 12px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>GitHub Wrapped</h1>
-      <p class="subtitle">Your annual GitHub coding statistics</p>
-    </header>
+    <div class="input-container" id="inputContainer">
+      <header>
+        <h1>GitHub Wrapped</h1>
+        <p class="subtitle">Your annual GitHub coding statistics</p>
+      </header>
 
-    <div class="input-group">
-      <input type="text" id="usernameInput" placeholder="Enter your GitHub username">
-      <button id="fetchButton">Get My Wrapped</button>
+      <div class="input-group">
+        <input type="text" id="usernameInput" placeholder="Enter your GitHub username" autocomplete="off">
+        <button id="fetchButton">Get My Wrapped</button>
+      </div>
+
+      <footer>
+        Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
+      </footer>
     </div>
 
     <div class="loading-container" id="loadingContainer">
@@ -270,45 +426,38 @@
     </div>
 
     <div class="wrapped-container" id="wrappedContainer">
-      <div class="profile-header">
-        <img id="userAvatar" class="avatar" src="" alt="User avatar">
-        <div class="profile-info">
-          <h2 id="userName"></h2>
-          <p id="joinDate"></p>
-        </div>
-      </div>
-
-      <div class="stat-card" id="statCard">
-        <h3 id="statTitle">Your GitHub Wrapped</h3>
-        <p id="statDescription">Tap to see your stats</p>
+      <!-- Slides will be dynamically inserted here -->
+      
+      <div class="nav-buttons">
+        <button class="nav-button" id="prevButton" disabled>← Previous</button>
+        <button class="nav-button" id="nextButton">Next →</button>
       </div>
 
       <div class="progress-dots" id="progressDots"></div>
-    </div>
 
-    <footer>
-      Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
-    </footer>
+      <button class="restart-button" id="restartButton">Start Over</button>
+    </div>
   </div>
 
   <script>
+    // DOM Elements
     const usernameInput = document.getElementById('usernameInput');
     const fetchButton = document.getElementById('fetchButton');
+    const inputContainer = document.getElementById('inputContainer');
     const loadingContainer = document.getElementById('loadingContainer');
     const loadingText = document.getElementById('loadingText');
     const wrappedContainer = document.getElementById('wrappedContainer');
-    const userAvatar = document.getElementById('userAvatar');
-    const userName = document.getElementById('userName');
-    const joinDate = document.getElementById('joinDate');
-    const statCard = document.getElementById('statCard');
-    const statTitle = document.getElementById('statTitle');
-    const statDescription = document.getElementById('statDescription');
     const progressDots = document.getElementById('progressDots');
+    const prevButton = document.getElementById('prevButton');
+    const nextButton = document.getElementById('nextButton');
+    const restartButton = document.getElementById('restartButton');
 
+    // State variables
     let stats = [];
-    let currentStatIndex = 0;
+    let currentSlideIndex = 0;
     let userData = null;
     let autoAdvanceTimer = null;
+    let slides = [];
 
     const loadingMessages = [
       "Fetching your GitHub profile...",
@@ -325,6 +474,8 @@
 
     async function fetchGitHubData(username) {
       try {
+        // Show loading state
+        inputContainer.classList.add('hidden');
         loadingContainer.style.display = 'flex';
         fetchButton.disabled = true;
         usernameInput.disabled = true;
@@ -336,6 +487,7 @@
           loadingIndex++;
         }, 2000);
 
+        // Actual API call to your backend
         const response = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
         if (!response.ok) {
           throw new Error(await response.text());
@@ -353,52 +505,107 @@
     function createStats(data) {
       return [
         {
-          title: `Welcome, ${data.name || data.login}`,
-          description: `You joined GitHub on <strong>${data.joined}</strong> and have <strong>${data.repoCount}</strong> repositories.`
+          type: "profile",
+          title: `Your GitHub Wrapped`,
+          content: `
+            <div class="profile-header">
+              <img class="avatar" src="${data.avatar}" alt="${data.name || data.login}'s avatar">
+              <div class="profile-info">
+                <h2>${data.name || data.login}</h2>
+                <p>Joined GitHub on ${data.joined}</p>
+              </div>
+            </div>
+            <p>Here's your personalized GitHub year in review. Swipe or use arrows to navigate.</p>
+          `
         },
         {
+          type: "stat",
+          title: "Repository Overview",
+          content: `You have <strong>${data.repoCount}</strong> repositories with a total of <strong>${data.totalStars.toLocaleString()}</strong> stars.`
+        },
+        {
+          type: "stat",
           title: "Code Mastery",
-          description: `You've written approximately <strong>${data.totalLOC.toLocaleString()}</strong> lines of code across all your projects.`
+          content: `You've written approximately <strong>${data.totalLOC.toLocaleString()}</strong> lines of code across all your projects.`
         },
         {
+          type: "stat",
           title: "Commit Champion",
-          description: `You've made <strong>${data.commitsCount.toLocaleString()}</strong> commits with your longest streak being <strong>${data.commitStreak}</strong> days.`
+          content: `You've made <strong>${data.commitsCount.toLocaleString()}</strong> commits with your longest streak being <strong>${data.commitStreak}</strong> days.`
         },
         {
-          title: "Star Collector",
-          description: `Your repositories have earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community.`
-        },
-        {
+          type: "stat",
           title: "Language Expert",
-          description: `Your most used language is <strong>${data.favoriteLanguage}</strong>.`
+          content: `Your most used language is <strong>${data.favoriteLanguage}</strong>.`
         },
         data.biggestRepo ? {
+          type: "stat",
           title: "Biggest Project",
-          description: `Your largest repository is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code.`
+          content: `Your largest repository is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code.`
         } : null,
         {
+          type: "stat",
           title: "Coding Rhythm",
-          description: `Your most active day is <strong>${data.mostActiveDay}</strong>.`
+          content: `Your most active day is <strong>${data.mostActiveDay}</strong>.`
         },
         {
+          type: "stat",
           title: "Coding Mood",
-          description: `You're a <strong>${data.codingMood.toLowerCase()}</strong>.`
+          content: `You're a <strong>${data.codingMood.toLowerCase()}</strong>.`
         },
         {
+          type: "stat",
           title: "Commit Style",
-          description: `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>".`
+          content: `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>".`
         }
       ].filter(Boolean);
     }
 
-    function showStat(index) {
-      if (index < 0 || index >= stats.length) return;
+    function createSlide(stat, index) {
+      const slide = document.createElement('div');
+      slide.className = `wrapped-slide ${index === 0 ? 'active' : ''}`;
+      slide.dataset.index = index;
       
-      currentStatIndex = index;
-      const stat = stats[index];
+      slide.innerHTML = `
+        <div class="stat-card">
+          <h3>${stat.title}</h3>
+          <div>${stat.content}</div>
+        </div>
+      `;
       
-      statTitle.textContent = stat.title;
-      statDescription.innerHTML = stat.description;
+      return slide;
+    }
+
+    function initializeSlides() {
+      // Clear existing slides
+      wrappedContainer.querySelectorAll('.wrapped-slide').forEach(slide => slide.remove());
+      
+      // Create new slides
+      slides = stats.map((stat, index) => {
+        const slide = createSlide(stat, index);
+        wrappedContainer.insertBefore(slide, wrappedContainer.firstChild);
+        return slide;
+      });
+      
+      // Show first slide
+      showSlide(0);
+    }
+
+    function showSlide(index) {
+      if (index < 0 || index >= slides.length) return;
+      
+      // Hide all slides
+      slides.forEach(slide => {
+        slide.classList.remove('active');
+      });
+      
+      // Show selected slide
+      slides[index].classList.add('active');
+      currentSlideIndex = index;
+      
+      // Update navigation buttons
+      prevButton.disabled = index === 0;
+      nextButton.disabled = index === slides.length - 1;
       
       // Update progress dots
       updateProgressDots();
@@ -409,31 +616,49 @@
 
     function updateProgressDots() {
       progressDots.innerHTML = '';
-      for (let i = 0; i < stats.length; i++) {
+      for (let i = 0; i < slides.length; i++) {
         const dot = document.createElement('div');
-        dot.className = 'dot';
-        if (i === currentStatIndex) {
-          dot.classList.add('active');
-        }
+        dot.className = `dot ${i === currentSlideIndex ? 'active' : ''}`;
+        dot.addEventListener('click', () => showSlide(i));
         progressDots.appendChild(dot);
       }
     }
 
     function resetAutoAdvance() {
       if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
-      autoAdvanceTimer = setTimeout(() => {
-        nextStat();
-      }, 8000);
+      if (currentSlideIndex < slides.length - 1) {
+        autoAdvanceTimer = setTimeout(() => {
+          nextSlide();
+        }, 8000);
+      }
     }
 
-    function nextStat() {
-      const nextIndex = (currentStatIndex + 1) % stats.length;
-      showStat(nextIndex);
+    function nextSlide() {
+      if (currentSlideIndex < slides.length - 1) {
+        showSlide(currentSlideIndex + 1);
+      }
     }
 
-    function prevStat() {
-      const prevIndex = (currentStatIndex - 1 + stats.length) % stats.length;
-      showStat(prevIndex);
+    function prevSlide() {
+      if (currentSlideIndex > 0) {
+        showSlide(currentSlideIndex - 1);
+      }
+    }
+
+    function resetUI() {
+      // Clear input
+      usernameInput.value = '';
+      
+      // Reset containers
+      inputContainer.classList.remove('hidden');
+      wrappedContainer.style.display = 'none';
+      
+      // Enable controls
+      fetchButton.disabled = false;
+      usernameInput.disabled = false;
+      
+      // Focus on input
+      usernameInput.focus();
     }
 
     async function handleFetch() {
@@ -447,22 +672,15 @@
         userData = await fetchGitHubData(username);
         stats = createStats(userData);
         
-        // Display user profile
-        userAvatar.src = userData.avatar;
-        userAvatar.alt = `${userData.name || username}'s avatar`;
-        userName.textContent = userData.name || username;
-        joinDate.textContent = `Joined GitHub on ${userData.joined}`;
+        // Initialize slides
+        initializeSlides();
         
         // Show wrapped container
         wrappedContainer.style.display = 'flex';
-        
-        // Show first stat
-        showStat(0);
       } catch (error) {
         console.error('Error:', error);
         alert(`Error: ${error.message}`);
-        fetchButton.disabled = false;
-        usernameInput.disabled = false;
+        resetUI();
       }
     }
 
@@ -472,18 +690,42 @@
       if (e.key === 'Enter') handleFetch();
     });
     
-    statCard.addEventListener('click', nextStat);
+    prevButton.addEventListener('click', prevSlide);
+    nextButton.addEventListener('click', nextSlide);
+    restartButton.addEventListener('click', resetUI);
     
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (wrappedContainer.style.display === 'flex') {
-        if (e.key === 'ArrowRight') nextStat();
-        if (e.key === 'ArrowLeft') prevStat();
+        if (e.key === 'ArrowRight') nextSlide();
+        if (e.key === 'ArrowLeft') prevSlide();
       }
     });
 
+    // Swipe navigation for mobile
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    wrappedContainer.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+    }, false);
+    
+    wrappedContainer.addEventListener('touchend', (e) => {
+      touchEndX = e.changedTouches[0].screenX;
+      handleSwipe();
+    }, false);
+    
+    function handleSwipe() {
+      if (touchEndX < touchStartX - 50) {
+        nextSlide(); // Swipe left
+      }
+      if (touchEndX > touchStartX + 50) {
+        prevSlide(); // Swipe right
+      }
+    }
+
     // Initialize
-    updateProgressDots();
+    resetUI();
   </script>
 </body>
 </html>

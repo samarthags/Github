@@ -1,510 +1,489 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Your GitHub Wrapped</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Wrapped</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    :root {
+      --primary: #6e40c9;
+      --primary-light: #8a63d2;
+      --text: #2d3748;
+      --text-light: #4a5568;
+      --bg: #f7fafc;
+      --card-bg: #ffffff;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+      --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+      --radius: 12px;
+    }
 
-    /* Reset */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
-    
-    html, body {
-      height: 100%;
-      background-color: #ffffff;
-      color: #333;
+
+    body {
       font-family: 'Poppins', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
+      padding: 20px;
+      line-height: 1.5;
     }
 
-    /* Container */
     .container {
-      width: 100%;
       max-width: 600px;
-      padding: 20px;
+      width: 100%;
+      margin: 0 auto;
+      flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
     }
 
-    /* Input & Button */
-    #usernameInput {
-      width: 100%;
-      max-width: 400px;
-      padding: 15px 20px;
-      font-size: 1rem;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      outline: none;
-      margin-bottom: 15px;
-      background: #f9f9f9;
-      color: #333;
-      transition: all 0.3s ease;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    
-    #usernameInput:focus {
-      border-color: #8a2be2;
-      box-shadow: 0 2px 10px rgba(138,43,226,0.2);
-    }
-
-    #startBtn {
-      width: 100%;
-      max-width: 400px;
-      background: #8a2be2;
-      border: none;
-      padding: 15px 0;
-      font-weight: 600;
-      font-size: 1rem;
-      border-radius: 10px;
-      color: white;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 6px rgba(138,43,226,0.2);
-    }
-    
-    #startBtn:hover:not(:disabled) {
-      background: #7b1fa2;
-      transform: translateY(-2px);
-      box-shadow: 0 6px 8px rgba(138,43,226,0.3);
-    }
-    
-    #startBtn:active:not(:disabled) {
-      transform: translateY(0);
-    }
-    
-    #startBtn:disabled {
-      background: #b39ddb;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
-
-    /* Loading animation - initially hidden */
-    #loading {
-      width: 100%;
+    header {
       text-align: center;
-      margin: 20px 0;
-      min-height: 100px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .loading-text {
-      font-size: 1.1rem;
-      color: #666;
-      margin-bottom: 15px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.5s ease;
-    }
-    
-    .loading-text.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    .spinner {
-      width: 40px;
-      height: 40px;
-      border: 4px solid #f3f3f3;
-      border-top: 4px solid #8a2be2;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
-    
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Wrapped Screen */
-    #wrappedScreen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      padding: 20px;
-      position: relative;
-    }
-
-    /* Top profile section */
-    #topInfo {
-      display: flex;
-      align-items: center;
-      gap: 15px;
       margin-bottom: 30px;
-      align-self: flex-end;
-      padding: 10px 15px;
-      background: #f5f5f5;
-      border-radius: 30px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
 
-    #avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 2px solid #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-
-    #usernameGreeting {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: #8a2be2;
-    }
-
-    /* Main wrapped content */
-    #storyText {
-      font-size: 1.8rem;
-      font-weight: 600;
-      color: #333;
-      width: 100%;
-      min-height: 300px;
-      line-height: 1.4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 30px;
-      margin: 20px 0;
-      background: #f9f9f9;
-      border-radius: 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.8s ease;
-      cursor: pointer;
-    }
-    
-    #storyText.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    #storyText strong {
-      color: #8a2be2;
+    h1 {
+      font-size: 2.2rem;
+      color: var(--primary);
+      margin-bottom: 10px;
       font-weight: 700;
     }
 
-    /* Progress dots */
-    .progress-dots {
+    .subtitle {
+      color: var(--text-light);
+      font-weight: 300;
+    }
+
+    .input-group {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    input {
+      padding: 15px 20px;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      background-color: var(--card-bg);
+      box-shadow: var(--shadow);
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(110, 64, 201, 0.2);
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 15px;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow);
+    }
+
+    button:hover {
+      background-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    button:disabled {
+      background-color: #a0aec0;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: var(--shadow);
+    }
+
+    .loading-container {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid rgba(110, 64, 201, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading-text {
+      color: var(--text-light);
+      font-size: 1.1rem;
+      text-align: center;
+    }
+
+    .wrapped-container {
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
       margin-bottom: 20px;
     }
-    
+
+    .avatar {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid white;
+      box-shadow: var(--shadow);
+    }
+
+    .profile-info h2 {
+      color: var(--primary);
+      font-size: 1.5rem;
+    }
+
+    .profile-info p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    .stat-card {
+      background-color: var(--card-bg);
+      border-radius: var(--radius);
+      padding: 25px;
+      box-shadow: var(--shadow);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .stat-card h3 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .stat-card p {
+      color: var(--text-light);
+    }
+
+    .stat-card strong {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .progress-dots {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
     .dot {
       width: 10px;
       height: 10px;
       border-radius: 50%;
-      background: #ddd;
-      transition: all 0.3s ease;
+      background-color: #e2e8f0;
+      transition: all 0.2s ease;
     }
-    
+
     .dot.active {
-      background: #8a2be2;
+      background-color: var(--primary);
       transform: scale(1.2);
     }
 
-    /* Footer */
     footer {
-      margin-top: auto;
-      padding: 20px;
-      font-size: 0.9rem;
-      color: #888;
       text-align: center;
+      margin-top: 40px;
+      color: var(--text-light);
+      font-size: 0.9rem;
     }
-    
+
     footer a {
-      color: #8a2be2;
+      color: var(--primary);
       text-decoration: none;
       font-weight: 600;
     }
-    
-    footer a:hover {
-      text-decoration: underline;
-    }
 
-    /* Responsive */
-    @media (max-width: 600px) {
-      #storyText {
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      .stat-card h3 {
         font-size: 1.5rem;
-        min-height: 250px;
-        padding: 20px;
       }
-      
-      #topInfo {
-        align-self: center;
+
+      .avatar {
+        width: 60px;
+        height: 60px;
       }
-      
-      .container {
-        padding: 15px;
-      }
-    }
-    
-    @media (max-width: 400px) {
-      #storyText {
+
+      .profile-info h2 {
         font-size: 1.3rem;
-      }
-      
-      #usernameGreeting {
-        font-size: 1rem;
-      }
-      
-      #avatar {
-        width: 40px;
-        height: 40px;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <input id="usernameInput" type="text" placeholder="Enter your GitHub username" autocomplete="off" />
-    <button id="startBtn">Show My GitHub Wrapped</button>
-    
-    <div id="loading">
-      <div class="spinner"></div>
-      <div class="loading-text" id="loadingText1">Preparing your GitHub Wrapped...</div>
-      <div class="loading-text" id="loadingText2">Connecting to GitHub...</div>
-      <div class="loading-text" id="loadingText3">Analyzing your repositories...</div>
-      <div class="loading-text" id="loadingText4">Calculating your coding stats...</div>
-      <div class="loading-text" id="loadingText5">Finalizing your results...</div>
+    <header>
+      <h1>GitHub Wrapped</h1>
+      <p class="subtitle">Your annual GitHub coding statistics</p>
+    </header>
+
+    <div class="input-group">
+      <input type="text" id="usernameInput" placeholder="Enter your GitHub username">
+      <button id="fetchButton">Get My Wrapped</button>
     </div>
 
-    <div id="wrappedScreen" aria-live="polite" aria-atomic="true">
-      <div id="topInfo">
-        <img id="avatar" src="" alt="User avatar" />
-        <div id="usernameGreeting"></div>
+    <div class="loading-container" id="loadingContainer">
+      <div class="spinner"></div>
+      <p class="loading-text" id="loadingText">Fetching your GitHub data...</p>
+    </div>
+
+    <div class="wrapped-container" id="wrappedContainer">
+      <div class="profile-header">
+        <img id="userAvatar" class="avatar" src="" alt="User avatar">
+        <div class="profile-info">
+          <h2 id="userName"></h2>
+          <p id="joinDate"></p>
+        </div>
       </div>
-      
-      <div id="storyText" tabindex="0" role="button">
-        Tap to see your GitHub stats
+
+      <div class="stat-card" id="statCard">
+        <h3 id="statTitle">Your GitHub Wrapped</h3>
+        <p id="statDescription">Tap to see your stats</p>
       </div>
-      
+
       <div class="progress-dots" id="progressDots"></div>
     </div>
+
+    <footer>
+      Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
+    </footer>
   </div>
 
-  <footer>
-    made with 💜 by <a href="https://samarthags.in" target="_blank" rel="noopener noreferrer">Samartha gs</a>
-  </footer>
+  <script>
+    const usernameInput = document.getElementById('usernameInput');
+    const fetchButton = document.getElementById('fetchButton');
+    const loadingContainer = document.getElementById('loadingContainer');
+    const loadingText = document.getElementById('loadingText');
+    const wrappedContainer = document.getElementById('wrappedContainer');
+    const userAvatar = document.getElementById('userAvatar');
+    const userName = document.getElementById('userName');
+    const joinDate = document.getElementById('joinDate');
+    const statCard = document.getElementById('statCard');
+    const statTitle = document.getElementById('statTitle');
+    const statDescription = document.getElementById('statDescription');
+    const progressDots = document.getElementById('progressDots');
 
-<script>
-  const startBtn = document.getElementById('startBtn');
-  const usernameInput = document.getElementById('usernameInput');
-  const loadingDiv = document.getElementById('loading');
-  const loadingTexts = [
-    document.getElementById('loadingText1'),
-    document.getElementById('loadingText2'),
-    document.getElementById('loadingText3'),
-    document.getElementById('loadingText4'),
-    document.getElementById('loadingText5')
-  ];
-  const wrappedScreen = document.getElementById('wrappedScreen');
-  const avatarImg = document.getElementById('avatar');
-  const usernameGreeting = document.getElementById('usernameGreeting');
-  const storyText = document.getElementById('storyText');
-  const progressDots = document.getElementById('progressDots');
+    let stats = [];
+    let currentStatIndex = 0;
+    let userData = null;
+    let autoAdvanceTimer = null;
 
-  let stats = [];
-  let currentIndex = 0;
-  let autoAdvanceTimeout = null;
-  let isAnimating = false;
+    const loadingMessages = [
+      "Fetching your GitHub profile...",
+      "Analyzing your repositories...",
+      "Counting your lines of code...",
+      "Calculating your commit stats...",
+      "Almost there...",
+      "Preparing your Wrapped..."
+    ];
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+    function updateLoadingMessage(index) {
+      loadingText.textContent = loadingMessages[index % loadingMessages.length];
+    }
 
-  async function showLoadingSequence() {
-    loadingDiv.style.display = 'flex';
-    
-    for (let i = 0; i < loadingTexts.length; i++) {
-      loadingTexts[i].classList.add('active');
-      await sleep(1500);
-      if (i < loadingTexts.length - 1) {
-        loadingTexts[i].classList.remove('active');
+    async function fetchGitHubData(username) {
+      try {
+        loadingContainer.style.display = 'flex';
+        fetchButton.disabled = true;
+        usernameInput.disabled = true;
+
+        // Show loading messages in sequence
+        let loadingIndex = 0;
+        const loadingInterval = setInterval(() => {
+          updateLoadingMessage(loadingIndex);
+          loadingIndex++;
+        }, 2000);
+
+        const response = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        clearInterval(loadingInterval);
+        return await response.json();
+      } catch (error) {
+        throw error;
+      } finally {
+        loadingContainer.style.display = 'none';
       }
     }
-  }
 
-  async function showStory(index) {
-    if (isAnimating) return;
-    isAnimating = true;
-
-    storyText.classList.remove('visible');
-    await sleep(500);
-
-    storyText.innerHTML = stats[index];
-    storyText.classList.add('visible');
-    
-    // Update progress dots
-    updateProgressDots(index);
-    
-    isAnimating = false;
-    resetAutoAdvance();
-  }
-
-  function updateProgressDots(index) {
-    // Clear existing dots
-    progressDots.innerHTML = '';
-    
-    // Create new dots
-    for (let i = 0; i < stats.length; i++) {
-      const dot = document.createElement('div');
-      dot.classList.add('dot');
-      if (i === index) dot.classList.add('active');
-      progressDots.appendChild(dot);
+    function createStats(data) {
+      return [
+        {
+          title: `Welcome, ${data.name || data.login}`,
+          description: `You joined GitHub on <strong>${data.joined}</strong> and have <strong>${data.repoCount}</strong> repositories.`
+        },
+        {
+          title: "Code Mastery",
+          description: `You've written approximately <strong>${data.totalLOC.toLocaleString()}</strong> lines of code across all your projects.`
+        },
+        {
+          title: "Commit Champion",
+          description: `You've made <strong>${data.commitsCount.toLocaleString()}</strong> commits with your longest streak being <strong>${data.commitStreak}</strong> days.`
+        },
+        {
+          title: "Star Collector",
+          description: `Your repositories have earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community.`
+        },
+        {
+          title: "Language Expert",
+          description: `Your most used language is <strong>${data.favoriteLanguage}</strong>.`
+        },
+        data.biggestRepo ? {
+          title: "Biggest Project",
+          description: `Your largest repository is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code.`
+        } : null,
+        {
+          title: "Coding Rhythm",
+          description: `Your most active day is <strong>${data.mostActiveDay}</strong>.`
+        },
+        {
+          title: "Coding Mood",
+          description: `You're a <strong>${data.codingMood.toLowerCase()}</strong>.`
+        },
+        {
+          title: "Commit Style",
+          description: `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>".`
+        }
+      ].filter(Boolean);
     }
-  }
 
-  function resetAutoAdvance() {
-    if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
-    autoAdvanceTimeout = setTimeout(() => {
-      nextStat();
-    }, 8000);
-  }
+    function showStat(index) {
+      if (index < 0 || index >= stats.length) return;
+      
+      currentStatIndex = index;
+      const stat = stats[index];
+      
+      statTitle.textContent = stat.title;
+      statDescription.innerHTML = stat.description;
+      
+      // Update progress dots
+      updateProgressDots();
+      
+      // Reset auto-advance timer
+      resetAutoAdvance();
+    }
 
-  function nextStat() {
-    currentIndex = (currentIndex + 1) % stats.length;
-    showStory(currentIndex);
-  }
+    function updateProgressDots() {
+      progressDots.innerHTML = '';
+      for (let i = 0; i < stats.length; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === currentStatIndex) {
+          dot.classList.add('active');
+        }
+        progressDots.appendChild(dot);
+      }
+    }
 
-  async function fetchGitHubData(username) {
-    // First fetch user data
-    const userRes = await fetch(`https://api.github.com/users/${username}`);
-    if (!userRes.ok) throw new Error('User not found');
-    const userData = await userRes.json();
+    function resetAutoAdvance() {
+      if (autoAdvanceTimer) clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = setTimeout(() => {
+        nextStat();
+      }, 8000);
+    }
+
+    function nextStat() {
+      const nextIndex = (currentStatIndex + 1) % stats.length;
+      showStat(nextIndex);
+    }
+
+    function prevStat() {
+      const prevIndex = (currentStatIndex - 1 + stats.length) % stats.length;
+      showStat(prevIndex);
+    }
+
+    async function handleFetch() {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        alert('Please enter a GitHub username');
+        return;
+      }
+
+      try {
+        userData = await fetchGitHubData(username);
+        stats = createStats(userData);
+        
+        // Display user profile
+        userAvatar.src = userData.avatar;
+        userAvatar.alt = `${userData.name || username}'s avatar`;
+        userName.textContent = userData.name || username;
+        joinDate.textContent = `Joined GitHub on ${userData.joined}`;
+        
+        // Show wrapped container
+        wrappedContainer.style.display = 'flex';
+        
+        // Show first stat
+        showStat(0);
+      } catch (error) {
+        console.error('Error:', error);
+        alert(`Error: ${error.message}`);
+        fetchButton.disabled = false;
+        usernameInput.disabled = false;
+      }
+    }
+
+    // Event listeners
+    fetchButton.addEventListener('click', handleFetch);
+    usernameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleFetch();
+    });
     
-    // Then fetch repos
-    const reposRes = await fetch(`https://api.github.com/users/${username}/repos?per_page=100`);
-    if (!reposRes.ok) throw new Error('Could not fetch repositories');
-    const reposData = await reposRes.json();
+    statCard.addEventListener('click', nextStat);
     
-    // Calculate some stats
-    const totalStars = reposData.reduce((sum, repo) => sum + repo.stargazers_count, 0);
-    const commitsCount = Math.floor(reposData.length * 12.5); // Approximate
-    const commitStreak = Math.floor(Math.random() * 30) + 5; // Would need specific API for this
-    
-    // Determine favorite language
-    const languages = {};
-    reposData.forEach(repo => {
-      if (repo.language) {
-        languages[repo.language] = (languages[repo.language] || 0) + 1;
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (wrappedContainer.style.display === 'flex') {
+        if (e.key === 'ArrowRight') nextStat();
+        if (e.key === 'ArrowLeft') prevStat();
       }
     });
-    const favoriteLanguage = Object.keys(languages).reduce((a, b) => 
-      languages[a] > languages[b] ? a : b, 'Unknown');
-    
-    // Find biggest repo (by size)
-    const biggestRepo = reposData.reduce((biggest, repo) => 
-      repo.size > (biggest?.size || 0) ? repo : biggest, null);
-    
-    return {
-      name: userData.name || username,
-      avatar: userData.avatar_url,
-      totalLOC: Math.floor(reposData.reduce((sum, repo) => sum + repo.size, 0) * 1.5), // Approximation
-      commitsCount,
-      commitStreak,
-      totalStars,
-      favoriteLanguage,
-      biggestRepo: biggestRepo ? {
-        name: biggestRepo.name,
-        loc: Math.floor(biggestRepo.size * 1.5) // Approximation
-      } : null,
-      mostActiveDay: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Weekend'][Math.floor(Math.random() * 6)],
-      codingMood: ['focused', 'experimental', 'productive', 'creative'][Math.floor(Math.random() * 4)],
-      mostCommonCommit: ['fix', 'update', 'feat', 'refactor'][Math.floor(Math.random() * 4)]
-    };
-  }
 
-  async function startWrapped() {
-    const username = usernameInput.value.trim();
-    if (!username) {
-      alert('Please enter your GitHub username.');
-      return;
-    }
-
-    startBtn.disabled = true;
-    usernameInput.disabled = true;
-    
-    try {
-      // Show loading sequence
-      await showLoadingSequence();
-      
-      // Fetch real GitHub data
-      const data = await fetchGitHubData(username);
-
-      stats = [
-        `Hey <strong>${data.name || username}</strong>, you've written approximately <strong>${data.totalLOC.toLocaleString()}</strong> lines of code!`,
-        `You've made around <strong>${data.commitsCount.toLocaleString()}</strong> commits across your repositories.`,
-        `Your longest commit streak was <strong>${data.commitStreak} days</strong>!`,
-        `Your repositories have earned <strong>${data.totalStars.toLocaleString()}</strong> stars in total.`,
-        `Your most used programming language is <strong>${data.favoriteLanguage}</strong>.`,
-        data.biggestRepo
-          ? `Your largest repository is <strong>${data.biggestRepo.name}</strong> with approximately <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code.`
-          : `No repository data available.`,
-        `Your most active coding day is typically <strong>${data.mostActiveDay}</strong>.`,
-        `Your coding style is <strong>${data.codingMood}</strong>.`,
-        `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>".`
-      ];
-
-      // Hide loading and show wrapped
-      loadingDiv.style.display = 'none';
-      wrappedScreen.style.display = 'flex';
-
-      avatarImg.src = data.avatar;
-      avatarImg.alt = `${data.name || username}'s avatar`;
-      usernameGreeting.textContent = data.name || username;
-
-      // Show first stat
-      currentIndex = 0;
-      await showStory(currentIndex);
-
-      // Focus for accessibility
-      storyText.focus();
-
-    } catch (error) {
-      // Handle errors
-      loadingDiv.style.display = 'none';
-      loadingTexts.forEach(text => text.classList.remove('active'));
-      loadingTexts[0].textContent = `Error: ${error.message}`;
-      loadingTexts[0].classList.add('active');
-      loadingDiv.style.display = 'flex';
-      
-      startBtn.disabled = false;
-      usernameInput.disabled = false;
-    }
-  }
-
-  // Event listeners
-  storyText.addEventListener('click', nextStat);
-  storyText.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      nextStat();
-    }
-  });
-
-  startBtn.addEventListener('click', startWrapped);
-  usernameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') startWrapped();
-  });
-</script>
+    // Initialize
+    updateProgressDots();
+  </script>
 </body>
 </html>

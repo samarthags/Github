@@ -4,77 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Your GitHub Wrapped</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
 
+  <style>
     /* Reset */
-    * {
+    *, *::before, *::after {
       box-sizing: border-box;
     }
     html, body {
       margin: 0; padding: 0;
       height: 100%;
-      background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-      color: #fff;
-      font-family: 'Poppins', sans-serif;
+      background: #f7f8fa;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+      color: #222;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       user-select: none;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
-      -o-user-select: none;
+      overflow-x: hidden;
+      text-align: center;
+      padding: 20px;
     }
 
-    /* Input & Button */
-    #usernameInput {
-      width: 90vw;
+    /* Container for input & button */
+    #inputContainer {
+      width: 100%;
       max-width: 400px;
-      padding: 16px 20px;
-      font-size: 1.3rem;
-      border-radius: 14px;
-      border: none;
+      margin-bottom: 50px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    /* Input styling */
+    #usernameInput {
+      width: 100%;
+      padding: 14px 20px;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      border: 1.5px solid #ccc;
       outline: none;
-      margin-bottom: 20px;
-      background: #21262d;
-      color: #c9d1d9;
-      transition: background 0.3s ease;
+      transition: border-color 0.3s ease;
+      font-weight: 600;
+      text-align: center;
+      color: #222;
+      background-color: #fff;
+    }
+    #usernameInput::placeholder {
+      color: #999;
+      font-weight: 500;
+      font-style: italic;
     }
     #usernameInput:focus {
-      background: #30363d;
+      border-color: #0078d4;
+      background-color: #f0f8ff;
     }
 
+    /* Button styling */
     #startBtn {
-      width: 90vw;
-      max-width: 400px;
-      background: #238636;
-      border: none;
-      padding: 16px 0;
+      width: 100%;
+      padding: 14px 0;
+      font-size: 1.2rem;
       font-weight: 700;
-      font-size: 1.3rem;
-      border-radius: 14px;
+      border-radius: 8px;
+      border: none;
+      background: #0078d4;
       color: white;
       cursor: pointer;
-      transition: background 0.3s ease;
-      margin-bottom: 30px;
+      transition: background-color 0.3s ease;
       user-select: none;
+      box-shadow: 0 3px 6px rgba(0, 120, 212, 0.35);
     }
     #startBtn:hover:not(:disabled) {
-      background: #2ea043;
+      background: #005fa3;
+      box-shadow: 0 5px 12px rgba(0, 95, 163, 0.4);
     }
     #startBtn:disabled {
-      background: #444c56;
+      background: #ccc;
       cursor: not-allowed;
+      box-shadow: none;
+      color: #888;
     }
 
     /* Loading text */
     #loading {
-      font-size: 1.2rem;
-      color: #8b949e;
+      font-size: 1rem;
+      color: #666;
       min-height: 1.5em;
-      margin-bottom: 20px;
+      margin-top: 8px;
+      font-weight: 600;
+      font-style: italic;
+      user-select: none;
     }
 
     /* Wrapped Screen */
@@ -82,104 +104,122 @@
       display: none;
       flex-direction: column;
       align-items: center;
-      max-width: 700px;
-      width: 90vw;
+      width: 100%;
+      max-width: 600px;
       padding: 0 15px;
+      user-select: none;
+      color: #111;
     }
 
-    /* Top small avatar + name */
+    /* Top small avatar + username */
     #topInfo {
       display: flex;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       margin-bottom: 40px;
       user-select: none;
     }
-
     #avatar {
-      width: 70px;
-      height: 70px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      border: 3px solid #30363d;
-      box-shadow: 0 0 12px rgba(35,134,54,0.7);
+      border: 1.5px solid #ddd;
       flex-shrink: 0;
+      object-fit: cover;
     }
-
     #usernameGreeting {
-      font-size: 1.8rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      color: #58a6ff;
+      color: #0078d4;
       white-space: nowrap;
     }
 
-    /* Main wrapped text */
+    /* Main wrapped text area */
     #storyText {
-      font-size: 2.8rem;
-      font-weight: 700;
-      color: #fff;
+      font-weight: 600;
+      font-size: 2rem;
       max-width: 100%;
-      min-height: 10rem;
-      line-height: 1.2;
+      min-height: 120px;
       cursor: pointer;
       user-select: none;
+      color: #222;
+      line-height: 1.3;
+      transition: opacity 0.6s ease, transform 0.6s ease;
       opacity: 0;
-      transform: translateX(40px);
-      transition: opacity 0.8s ease, transform 0.8s ease;
-      text-shadow: 0 0 8px rgba(88,166,255,0.7);
-      margin-bottom: 15px;
+      transform: translateY(20px);
+      margin-bottom: 30px;
     }
-
     #storyText.visible {
       opacity: 1;
-      transform: translateX(0);
+      transform: translateY(0);
     }
 
-    /* Tap helper */
+    /* Tap helper text */
     #tapHelper {
       font-size: 1rem;
-      color: #8b949e;
       font-weight: 500;
-      margin-bottom: 40px;
+      color: #666;
       font-style: italic;
       user-select: none;
+      margin-bottom: 50px;
     }
 
     /* Footer */
     footer {
       margin-top: auto;
-      padding: 20px 10px;
+      padding: 14px 10px;
       font-size: 1rem;
-      color: #8b949e;
+      color: #888;
+      font-weight: 500;
       user-select: none;
+      text-align: center;
     }
-
     footer a {
-      color: #58a6ff;
-      text-decoration: none;
+      color: #0078d4;
       font-weight: 600;
+      text-decoration: none;
+      transition: text-decoration 0.3s ease;
     }
-
-    footer a:hover {
+    footer a:hover,
+    footer a:focus {
       text-decoration: underline;
+      outline: none;
     }
 
     /* Responsive */
-    @media (max-width: 450px) {
+    @media (max-width: 480px) {
       #storyText {
-        font-size: 2rem;
-        min-height: 8rem;
+        font-size: 1.6rem;
+        min-height: 100px;
       }
       #usernameGreeting {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
+      }
+      #usernameInput {
+        font-size: 1rem;
+      }
+      #startBtn {
+        font-size: 1.1rem;
+      }
+      #tapHelper {
+        font-size: 0.9rem;
       }
     }
   </style>
 </head>
 <body>
 
-  <input id="usernameInput" type="text" placeholder="Enter your GitHub username" autocomplete="off" />
-  <button id="startBtn">Show My GitHub Wrapped</button>
-  <div id="loading"></div>
+  <div id="inputContainer">
+    <input
+      id="usernameInput"
+      type="text"
+      placeholder="Enter your GitHub username"
+      autocomplete="off"
+      aria-label="GitHub username input"
+    />
+    <button id="startBtn">Show My GitHub Wrapped</button>
+    <div id="loading" aria-live="polite"></div>
+  </div>
 
   <div id="wrappedScreen" aria-live="polite" aria-atomic="true">
     <div id="topInfo">
@@ -187,133 +227,133 @@
       <div id="usernameGreeting"></div>
     </div>
 
-    <div id="storyText" title="Tap or click to see next stat" tabindex="0" role="button" aria-pressed="false"></div>
+    <div
+      id="storyText"
+      title="Tap or click to see next stat"
+      tabindex="0"
+      role="button"
+      aria-pressed="false"
+      aria-label="GitHub Wrapped statistics"
+    ></div>
+
     <div id="tapHelper">Tap or click the text to see more stats</div>
   </div>
 
   <footer>
-    made with 💜 by <a href="https://samarthags.in" target="_blank" rel="noopener noreferrer">Samartha gs</a>
+    made with 💜 by
+    <a href="https://samarthags.in" target="_blank" rel="noopener noreferrer">Samartha gs</a>
   </footer>
 
-<script>
-  const startBtn = document.getElementById('startBtn');
-  const usernameInput = document.getElementById('usernameInput');
-  const loadingDiv = document.getElementById('loading');
-  const wrappedScreen = document.getElementById('wrappedScreen');
-  const avatarImg = document.getElementById('avatar');
-  const usernameGreeting = document.getElementById('usernameGreeting');
-  const storyText = document.getElementById('storyText');
-  const tapHelper = document.getElementById('tapHelper');
+  <script>
+    const startBtn = document.getElementById('startBtn');
+    const usernameInput = document.getElementById('usernameInput');
+    const loadingDiv = document.getElementById('loading');
+    const wrappedScreen = document.getElementById('wrappedScreen');
+    const avatarImg = document.getElementById('avatar');
+    const usernameGreeting = document.getElementById('usernameGreeting');
+    const storyText = document.getElementById('storyText');
+    const tapHelper = document.getElementById('tapHelper');
 
-  let stats = [];
-  let currentIndex = 0;
-  let autoAdvanceTimeout = null;
-  let isAnimating = false;
+    let stats = [];
+    let currentIndex = 0;
+    let autoAdvanceTimeout = null;
+    let isAnimating = false;
 
-  function sleep(ms) {
-    return new Promise((resolve) => setTimeout(resolve, ms));
-  }
+    function sleep(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
 
-  async function showStory(index) {
-    if (isAnimating) return;
-    isAnimating = true;
+    async function showStory(index) {
+      if (isAnimating) return;
+      isAnimating = true;
 
-    storyText.classList.remove('visible');
-    await sleep(800);
+      storyText.classList.remove('visible');
+      await sleep(600);
 
-    storyText.innerHTML = stats[index];
-    storyText.classList.add('visible');
-    isAnimating = false;
+      storyText.innerHTML = stats[index];
+      storyText.classList.add('visible');
+      isAnimating = false;
 
-    resetAutoAdvance();
-  }
+      resetAutoAdvance();
+    }
 
-  function resetAutoAdvance() {
-    if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
-    autoAdvanceTimeout = setTimeout(() => {
+    function resetAutoAdvance() {
+      if (autoAdvanceTimeout) clearTimeout(autoAdvanceTimeout);
+      autoAdvanceTimeout = setTimeout(() => {
+        currentIndex = (currentIndex + 1) % stats.length;
+        showStory(currentIndex);
+      }, 8000);
+    }
+
+    async function startWrapped() {
+      const username = usernameInput.value.trim();
+      if (!username) {
+        alert('Please enter your GitHub username.');
+        return;
+      }
+
+      loadingDiv.textContent = 'Fetching your GitHub Wrapped...';
+      startBtn.disabled = true;
+      usernameInput.disabled = true;
+
+      try {
+        const res = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
+        if (!res.ok) throw new Error('User not found or API error.');
+        const data = await res.json();
+
+        stats = [
+          `Hey <strong>${data.name || username}</strong>, you have written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code.`,
+          `You made <strong>${data.commitsCount.toLocaleString()}</strong> commits in total.`,
+          data.commitStreak
+            ? `Your longest commit streak was <strong>${data.commitStreak} days</strong>. Great dedication!`
+            : `Commit streak data is not available.`,
+          `You earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community.`,
+          `Your favorite language is <strong>${data.favoriteLanguage}</strong>.`,
+          data.biggestRepo
+            ? `Your biggest repository is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code.`
+            : `No repository data available.`,
+          `You code mostly on <strong>${data.mostActiveDay}</strong>.`,
+          data.codingMood
+            ? `Your coding mood looks like: <strong>${data.codingMood}</strong>.`
+            : `Coding mood data is unavailable.`,
+          data.mostCommonCommit
+            ? `Most common commit message: "<strong>${data.mostCommonCommit}</strong>".`
+            : `No common commit message data available.`,
+          `Keep up the great work and happy coding!`
+        ];
+
+        avatarImg.src = data.avatar;
+        avatarImg.alt = `Avatar of ${data.name || username}`;
+        usernameGreeting.textContent = `Hey, ${data.name || username}`;
+
+        loadingDiv.textContent = '';
+        wrappedScreen.style.display = 'flex';
+        document.getElementById('inputContainer').style.display = 'none';
+
+        currentIndex = 0;
+        showStory(currentIndex);
+
+      } catch (err) {
+        loadingDiv.textContent = '';
+        alert(err.message || 'Failed to fetch data. Try again.');
+        startBtn.disabled = false;
+        usernameInput.disabled = false;
+      }
+    }
+
+    startBtn.addEventListener('click', startWrapped);
+    storyText.addEventListener('click', () => {
       currentIndex = (currentIndex + 1) % stats.length;
       showStory(currentIndex);
-    }, 8000);
-  }
+    });
+    storyText.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        currentIndex = (currentIndex + 1) % stats.length;
+        showStory(currentIndex);
+      }
+    });
 
-  async function startWrapped() {
-    const username = usernameInput.value.trim();
-    if (!username) {
-      alert('Please enter your GitHub username.');
-      return;
-    }
-
-    loadingDiv.textContent = 'Fetching your GitHub Wrapped...';
-    startBtn.disabled = true;
-    usernameInput.disabled = true;
-
-    try {
-      const res = await fetch(`/api/loc?username=${encodeURIComponent(username)}`);
-      if (!res.ok) throw new Error('User not found or API error.');
-      const data = await res.json();
-
-      stats = [
-        `Hey <strong>${data.name || username}</strong>, did you know you've written <strong>${data.totalLOC.toLocaleString()}</strong> lines of code? That’s a mountain of creativity!`,
-        `You made <strong>${data.commitsCount.toLocaleString()}</strong> commits in total — your dedication is inspiring.`,
-        data.commitStreak
-          ? `Your longest commit streak was <strong>${data.commitStreak} days</strong>. Keep that momentum going!`
-          : `Commit streak data is not available.`,
-        `You've earned <strong>${data.totalStars.toLocaleString()}</strong> stars from the community. Shine on!`,
-        `Your favorite language is <strong>${data.favoriteLanguage}</strong>, and it suits you perfectly.`,
-        data.biggestRepo
-          ? `Your largest repo is <strong>${data.biggestRepo.name}</strong> with <strong>${data.biggestRepo.loc.toLocaleString()}</strong> lines of code. Impressive!`
-          : `No repository data to show here.`,
-        `You code mostly on <strong>${data.mostActiveDay}</strong>. That’s your prime time!`,
-        data.codingMood
-          ? `Looks like your coding mood is <strong>${data.codingMood}</strong>. Stay inspired!`
-          : `Coding mood data is unavailable.`,
-        data.mostCommonCommit
-          ? `Your most common commit message starts with "<strong>${data.mostCommonCommit}</strong>". A true signature!`
-          : `No common commit message data found.`
-      ];
-
-      // Show wrapped screen
-      usernameInput.style.display = 'none';
-      startBtn.style.display = 'none';
-      loadingDiv.style.display = 'none';
-      wrappedScreen.style.display = 'flex';
-
-      avatarImg.src = data.avatar;
-      avatarImg.alt = `${data.name || username}'s avatar`;
-      usernameGreeting.textContent = `Hey ${data.name || username}`;
-
-      // Show first stat
-      currentIndex = 0;
-      await showStory(currentIndex);
-
-      // Focus for accessibility so user can tab to storyText
-      storyText.focus();
-
-    } catch (error) {
-      loadingDiv.textContent = error.message;
-      startBtn.disabled = false;
-      usernameInput.disabled = false;
-    }
-  }
-
-  storyText.addEventListener('click', () => {
-    currentIndex = (currentIndex + 1) % stats.length;
-    showStory(currentIndex);
-  });
-
-  storyText.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      currentIndex = (currentIndex + 1) % stats.length;
-      showStory(currentIndex);
-    }
-  });
-
-  startBtn.addEventListener('click', startWrapped);
-  usernameInput.addEventListener('keydown', e => {
-    if (e.key === 'Enter') startWrapped();
-  });
-</script>
-
+  </script>
 </body>
 </html>

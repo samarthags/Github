@@ -423,6 +423,48 @@
         margin-bottom: 15px;
       }
     }
+.scroll-indicator {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(110, 64, 201, 0.9);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+  }
+  
+  .scroll-indicator.visible {
+    opacity: 1;
+  }
+  
+  .scroll-indicator .arrow {
+    font-size: 1.2rem;
+    animation: bounce 1s infinite;
+  }
+  
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateX(0);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(3px);
+    }
+  }
+ 
   </style>
 </head>
 <body>
@@ -454,6 +496,13 @@
 
       <div class="progress-dots" id="progressDots"></div>
     </div>
+
+
+<div class="scroll-indicator" id="scrollIndicator">
+  <span>Scroll right to see your Wrapped</span>
+  <div class="arrow">→</div>
+</div>
+
 
     <footer>
       Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>

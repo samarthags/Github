@@ -809,5 +809,21 @@
     // Initialize
     resetUI();
   </script>
+
+<script>
+  // Show scroll indicator only on the first slide
+  function showScrollIndicator() {
+    const scrollIndicator = document.getElementById('scrollIndicator');
+    if (currentSlideIndex === 0) {
+      scrollIndicator.classList.add('visible');
+    } else {
+      scrollIndicator.classList.remove('visible');
+    }
+  }
+  
+  // Call this function whenever the slide changes
+  // Add this line inside your showSlide function after currentSlideIndex is updated:
+  // showScrollIndicator();
+</script>
 </body>
 </html>

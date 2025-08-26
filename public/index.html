@@ -532,7 +532,7 @@
 
     <div class="wrapped-container" id="wrappedContainer">
       <!-- Slides will be dynamically inserted here -->
-      
+
       <div class="nav-buttons">
         <button class="nav-button" id="prevButton" disabled>← Previous</button>
         <button class="nav-button" id="nextButton">Next →</button>
@@ -541,12 +541,10 @@
       <div class="progress-dots" id="progressDots"></div>
     </div>
 
-
-<div class="scroll-indicator" id="scrollIndicator">
-  <span>Scroll right to see your Wrapped</span>
-  <div class="arrow">→</div>
-</div>
-
+    <div class="scroll-indicator" id="scrollIndicator">
+      <span>Scroll right to see your Wrapped</span>
+      <div class="arrow">→</div>
+    </div>
 
     <footer>
       Made with ❤️ by <a href="https://samarthags.in" target="_blank">Samartha GS</a>
@@ -564,6 +562,7 @@
     const progressDots = document.getElementById('progressDots');
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
+    const scrollIndicator = document.getElementById('scrollIndicator');
 
     // State variables
     let stats = [];
@@ -628,10 +627,9 @@
                 <p>Joined GitHub on ${data.joined}</p>
               </div>
             </div>
-            <p class="animate-text delay-1">Here's your personalized GitHub year in review</p
-<p class="animate-text delay-1">Slide Right ➡️ to see all your stats</p>
-'
-          
+            <p class="animate-text delay-1">Here's your personalized GitHub year in review</p>
+            <p class="animate-text delay-2">Slide Right ➡️ to see all your stats</p>
+          `
         },
         {
           type: "stat",
@@ -680,54 +678,57 @@
       const slide = document.createElement('div');
       slide.className = `wrapped-slide ${index === 0 ? 'active' : ''}`;
       slide.dataset.index = index;
-      
+
       slide.innerHTML = `
         <div class="stat-card">
           <h3 class="animate-text">${stat.title}</h3>
           <div class="animate-text delay-1">${stat.content}</div>
         </div>
       `;
-      
+
       return slide;
     }
 
     function initializeSlides() {
       // Clear existing slides
       wrappedContainer.querySelectorAll('.wrapped-slide').forEach(slide => slide.remove());
-      
+
       // Create new slides
       slides = stats.map((stat, index) => {
         const slide = createSlide(stat, index);
         wrappedContainer.insertBefore(slide, wrappedContainer.firstChild);
         return slide;
       });
-      
+
       // Show first slide
       showSlide(0);
     }
 
     function showSlide(index) {
       if (index < 0 || index >= slides.length) return;
-      
+
       // Hide all slides
       slides.forEach(slide => {
         slide.classList.remove('active');
       });
-      
+
       // Show selected slide
       slides[index].classList.add('active');
       currentSlideIndex = index;
-      
+
       // Update navigation buttons
       prevButton.disabled = index === 0;
       nextButton.disabled = index === slides.length - 1;
-      
+
       // Update progress dots
       updateProgressDots();
-      
+
+      // Show scroll indicator
+      showScrollIndicator();
+
       // Reset auto-advance timer
       resetAutoAdvance();
-      
+
       // Add animation classes to new content
       const animatedElements = slides[index].querySelectorAll('.animate-text');
       animatedElements.forEach((el, i) => {
@@ -772,17 +773,26 @@
     function resetUI() {
       // Clear input
       usernameInput.value = '';
-      
+
       // Reset containers
       inputContainer.classList.remove('hidden');
       wrappedContainer.style.display = 'none';
-      
+
       // Enable controls
       fetchButton.disabled = false;
       usernameInput.disabled = false;
-      
+
       // Focus on input
       usernameInput.focus();
+    }
+
+    // Show scroll indicator only on the first slide
+    function showScrollIndicator() {
+      if (currentSlideIndex === 0 && wrappedContainer.style.display === 'flex') {
+        scrollIndicator.classList.add('visible');
+      } else {
+        scrollIndicator.classList.remove('visible');
+      }
     }
 
     async function handleFetch() {
@@ -795,12 +805,15 @@
       try {
         userData = await fetchGitHubData(username);
         stats = createStats(userData);
-        
+
         // Initialize slides
         initializeSlides();
-        
+
         // Show wrapped container
         wrappedContainer.style.display = 'flex';
+
+        // Show scroll indicator
+        showScrollIndicator();
       } catch (error) {
         console.error('Error:', error);
         alert(`Error: ${error.message}`);
@@ -813,10 +826,10 @@
     usernameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') handleFetch();
     });
-    
+
     prevButton.addEventListener('click', prevSlide);
     nextButton.addEventListener('click', nextSlide);
-    
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
       if (wrappedContainer.style.display === 'flex') {
@@ -828,16 +841,16 @@
     // Swipe navigation for mobile
     let touchStartX = 0;
     let touchEndX = 0;
-    
+
     wrappedContainer.addEventListener('touchstart', (e) => {
       touchStartX = e.changedTouches[0].screenX;
     }, false);
-    
+
     wrappedContainer.addEventListener('touchend', (e) => {
       touchEndX = e.changedTouches[0].screenX;
       handleSwipe();
     }, false);
-    
+
     function handleSwipe() {
       if (touchEndX < touchStartX - 50) {
         nextSlide(); // Swipe left
@@ -855,21 +868,5 @@
     // Initialize
     resetUI();
   </script>
-
-<script>
-  // Show scroll indicator only on the first slide
-  function showScrollIndicator() {
-    const scrollIndicator = document.getElementById('scrollIndicator');
-    if (currentSlideIndex === 0) {
-      scrollIndicator.classList.add('visible');
-    } else {
-      scrollIndicator.classList.remove('visible');
-    }
-  }
-  
-  // Call this function whenever the slide changes
-  // Add this line inside your showSlide function after currentSlideIndex is updated:
-  // showScrollIndicator();
-</script>
 </body>
 </html>

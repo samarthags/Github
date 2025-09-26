@@ -42,7 +42,7 @@ npm install
 
 3. Configure GitHub API Token
 
-Create a GitHub Personal Access Token here
+Create a GitHub Personal Access Token [here](https://github.com/settings/tokens)
 
 Add it to .env file:
 
